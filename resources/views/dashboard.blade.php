@@ -14,4 +14,8 @@
             </div>
         </div>
     </div>
+    <script>
+        const exampleSocket = new WebSocket("wss://www.example.com/socketserver", "protocolOne");
+        console.log(exampleSocket)
+    </script>
 </x-app-layout>
