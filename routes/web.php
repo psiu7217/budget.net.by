@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FamilyController;
+use App\Http\Controllers\PurseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,8 +31,12 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     Route::get('/family', [FamilyController::class, 'show'])->name('family.show');
-    Route::post('/family', [FamilyController::class, 'create'])->name('family.create');
-    Route::patch('/family', [FamilyController::class, 'find'])->name('family.find');
+    Route::get('/family/create', [FamilyController::class, 'create'])->name('family.create');
+    Route::patch('/family/find', [FamilyController::class, 'find'])->name('family.find');
+    Route::patch('/family/update', [FamilyController::class, 'update'])->name('family.update');
+    Route::patch('/family/leave', [FamilyController::class, 'leaveFamily'])->name('family.leave');
+
+    Route::resource('purse', PurseController::class);
 });
 
 require __DIR__.'/auth.php';

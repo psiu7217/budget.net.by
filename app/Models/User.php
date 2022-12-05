@@ -65,6 +65,6 @@ class User extends Authenticatable
 
     public function getAuthUser()
     {
-        return DB::table('users')->find(Auth::id());
+        return User::find(Auth::id());
     }
 }

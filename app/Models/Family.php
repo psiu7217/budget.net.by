@@ -17,7 +17,6 @@ class Family extends Model
      */
     protected $fillable = [
         'name',
-        'unique_code',
     ];
 
     /**
@@ -27,7 +26,8 @@ class Family extends Model
      */
     public function newUniqueId()
     {
-        return (string) Uuid::uuid4();
+        $this->unique_code = (string) Uuid::uuid4();
+        return $this->unique_code;
     }
 
     /**
