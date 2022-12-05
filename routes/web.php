@@ -29,7 +29,9 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    Route::get('/family/', [FamilyController::class, 'show']);
+    Route::get('/family', [FamilyController::class, 'show'])->name('family.show');
+    Route::post('/family', [FamilyController::class, 'create'])->name('family.create');
+    Route::patch('/family', [FamilyController::class, 'find'])->name('family.find');
 });
 
 require __DIR__.'/auth.php';

@@ -11,6 +11,16 @@ use Ramsey\Uuid\Uuid;
 class FamilyController extends Controller
 {
 
+    public function create()
+    {
+        dd('test');
+    }
+
+    public function find()
+    {
+
+    }
+
     public function show()
     {
         $user = new User;

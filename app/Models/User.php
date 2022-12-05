@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
 
 class User extends Authenticatable
 {
@@ -44,6 +45,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * Get the family that owns the user.
+     */
     public function family()
     {
         return $this->belongsTo(Family::class);
