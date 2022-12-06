@@ -17,7 +17,7 @@ class FamilyController extends Controller
      * Update the user's profile information.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function create(Request  $request)
     {
@@ -40,7 +40,7 @@ class FamilyController extends Controller
      * Update the user's profile information.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function find(Request  $request)
     {
@@ -64,7 +64,7 @@ class FamilyController extends Controller
      * Update the user's profile information.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request  $request)
     {
@@ -84,7 +84,7 @@ class FamilyController extends Controller
      * Update the user's profile information.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function leaveFamily(Request  $request)
     {
