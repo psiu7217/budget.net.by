@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FamilyController;
+use App\Http\Controllers\PurseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
-        return view('welcome');
+        return view('dashboard');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -27,6 +29,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    Route::get('/family', [FamilyController::class, 'show'])->name('family.show');
+    Route::get('/family/create', [FamilyController::class, 'create'])->name('family.create');
+    Route::patch('/family/find', [FamilyController::class, 'find'])->name('family.find');
+    Route::patch('/family/update', [FamilyController::class, 'update'])->name('family.update');
+    Route::patch('/family/leave', [FamilyController::class, 'leaveFamily'])->name('family.leave');
+
+    Route::resource('purse', PurseController::class);
 });
 
 require __DIR__.'/auth.php';
