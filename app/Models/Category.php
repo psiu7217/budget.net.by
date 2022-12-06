@@ -9,6 +9,16 @@ class Category extends Model
 {
     use HasFactory;
 
+
+
+    protected $fillable = [
+        'title',
+        'status',
+        'sort',
+        'hide',
+        'group_id',
+    ];
+
     public function group()
     {
         return $this->belongsTo(Group::class);
@@ -22,5 +32,13 @@ class Category extends Model
     public function plans()
     {
         return $this->hasMany(Plan::class);
+    }
+
+    public function categoryStatuses()
+    {
+        return [
+            1 => 'Normal',
+            2 => 'Deleted',
+        ];
     }
 }

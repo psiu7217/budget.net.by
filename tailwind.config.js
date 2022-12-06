@@ -18,3 +18,5 @@ module.exports = {
 
     plugins: [require('@tailwindcss/forms')],
 };
+
+// npx tailwindcss -i ./resources/css/app.css -o ./public/css/output.css --watch
