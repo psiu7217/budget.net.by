@@ -4,6 +4,11 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FamilyController;
 use App\Http\Controllers\PurseController;
+use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CheckController;
+use App\Http\Controllers\PlanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +42,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/family/leave', [FamilyController::class, 'leaveFamily'])->name('family.leave');
 
     Route::resource('purse', PurseController::class);
+    Route::resource('income', IncomeController::class);
+    Route::resource('group', GroupController::class);
+    Route::resource('category', CategoryController::class);
+    Route::resource('check', CheckController::class);
+    Route::resource('plan', PlanController::class);
 });
 
 require __DIR__.'/auth.php';

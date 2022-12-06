@@ -16,6 +16,7 @@ class Purse extends Model
         'sort',
         'user_id',
         'hide',
+        'currency',
     ];
 
     public function user()
@@ -34,19 +35,53 @@ class Purse extends Model
         $purse->fill($data);
         $purse->description = Crypt::encryptString($data['description']);
         $purse->number = Crypt::encryptString($data['number']);
+        $purse->pin = Crypt::encryptString($data['pin']);
         $purse->user_id = Auth::id();
         if (!$data['sort']) {
             $purse->sort = 1;
         }
-        if ($data['hide'] == 'on') {
+        if (isset($data['hide']) && $data['hide'] == 'on') {
             $purse->hide = 1;
+        }else {
+            $purse->hide = 0;
         }
-
-
-//        dd($purse);
 
         $purse->save();
 
         return $purse;
+    }
+
+    public function updatePurse($data, $id)
+    {
+        $purse = Purse::find($id);
+        if ($purse->user_id != Auth::id()) {
+            return null;
+        }
+        $purse->fill($data);
+        $purse->description = Crypt::encryptString($data['description']);
+        $purse->number = Crypt::encryptString($data['number']);
+        $purse->pin = Crypt::encryptString($data['pin']);
+        if (!$data['sort']) {
+            $purse->sort = 1;
+        }
+        if (isset($data['hide']) && $data['hide'] == 'on') {
+            $purse->hide = 1;
+        }else {
+            $purse->hide = 0;
+        }
+
+        $purse->save();
+
+        return $purse;
+    }
+
+    public function sumIncomes()
+    {
+        $sum = 0;
+        foreach ($this->incomes as $income) {
+            $sum += $income->cash;
+        }
+
+        return $sum;
     }
 }
