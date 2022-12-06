@@ -11,7 +11,9 @@
         <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
 
         <!-- Scripts -->
+        @vite('resources/css/app.css')
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @bukStyles
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -33,5 +35,6 @@
 
             @include('layouts.footer')
         </div>
+        @bukScripts
     </body>
 </html>

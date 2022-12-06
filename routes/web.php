@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FamilyController;
 use App\Http\Controllers\PurseController;
+use App\Http\Controllers\IncomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/family/leave', [FamilyController::class, 'leaveFamily'])->name('family.leave');
 
     Route::resource('purse', PurseController::class);
+    Route::resource('income', IncomeController::class);
 });
 
 require __DIR__.'/auth.php';
