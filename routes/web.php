@@ -9,6 +9,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckController;
 use App\Http\Controllers\PlanController;
+use App\Http\Controllers\CronController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,5 +49,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('check', CheckController::class);
     Route::resource('plan', PlanController::class);
 });
+
+
+Route::get('/cron/update-plan', [CronController::class, 'updatePlan'])->name('cron.update_plan');
 
 require __DIR__.'/auth.php';
