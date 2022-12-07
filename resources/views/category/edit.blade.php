@@ -74,6 +74,48 @@
                     </section>
                 </div>
             </div>
+
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                <section>
+                    @foreach($plans as $plan)
+                        <div class="space-y-6">
+                            <div class="@if ($loop->first) border-b-2 py-4 @else mt-4 @endif">
+
+                                @if ($loop->first)
+                                    <p class="text-gray-400 dark:text-gray-200 font-medium text-sm">Current plan for this month</p>
+                                @endif
+
+                                @if ($loop->iteration == 2)
+                                        <p class="text-gray-400 dark:text-gray-200 font-medium text-sm">Other plans</p>
+                                @endif
+
+                                <div class="flex justify-between">
+                                    <p class="text-gray-400 dark:text-gray-200">{{ $plan->cash }} BYN</p>
+                                    <p class="text-gray-400 dark:text-gray-200">{{ ($plan->created_at)->format('d-m-Y') }}</p>
+                                </div>
+                                @if ($loop->first)
+                                        <form method="post" action="{{route('plan.update', $plan->id)}}" class="border-t my-4 py-4">
+                                            @csrf
+                                            @method('patch')
+
+                                            <div>
+                                                <x-input-label for="cash" :value="__('Cash*')" />
+                                                <x-text-input id="cash" name="cash" type="number" step="0.01" class="mt-1 block w-full" :value="old('cash', $plan->cash)" required />
+                                                <x-input-error class="mt-2" :messages="$errors->get('cash')" />
+                                            </div>
+
+                                            <div class="flex items-center justify-between gap-4 mt-2">
+                                                <x-primary-button class="w-full">{{ __('Update Current Plan') }}</x-primary-button>
+                                            </div>
+
+                                        </form>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </section>
+            </div>
         </div>
     </div>
+
 </x-app-layout>

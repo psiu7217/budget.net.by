@@ -11,7 +11,7 @@ class CronController extends Controller
     public function updatePlan()
     {
         $family = Family::find(1);
-        $family->name = 'Update success';
+        $family->name = 'Anisko';
         $family->save();
     }
 }

@@ -5,7 +5,7 @@
                 {{ __('Categories') }}
             </h2>
             <div class="flex">
-                <a href="{{ route('group.index') }}" class="mx-4 inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150">
+                <a href="{{ route('group.index') }}" class="mx-2 inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150">
                     {{ __('My Groups') }}
                 </a>
                 <p></p>
@@ -31,9 +31,23 @@
                 </div>
             @endif
 
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">
+                    <div>
+                        {{ __('Total plans') }}
+                    </div>
+                    <div>
+                        {{ $user->sumTotalPlans }}
+                    </div>
+                </h3>
+            </div>
+
             @foreach($groups as $group)
                     <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                        <h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">{{ $group->title }}</h3>
+                        <h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">
+                            <div>{{ $group->title }}</div>
+                            <div>{{ $group->sumPlans }}</div>
+                        </h3>
                         @if(!count($group->categories))
                             <p class="text-gray-900 dark:text-gray-100">No category</p>
                         @endif

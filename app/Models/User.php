@@ -63,8 +63,40 @@ class User extends Authenticatable
         return $this->hasMany(Group::class);
     }
 
+    public function categories()
+    {
+        return $this->hasManyThrough(Category::class, Group::class);
+    }
+
+    public function incomes()
+    {
+        return $this->hasManyThrough(Income::class, Purse::class);
+    }
+
+    public function checks()
+    {
+        return $this->hasManyThrough(Check::class, Purse::class);
+    }
+
+    /**
+     * Custom functions
+     * @return mixed
+     */
     public function getAuthUser()
     {
-        return User::find(Auth::id());
+        $user = User::find(Auth::id());
+
+        $sumTotal = 0;
+        foreach ($user->groups as $group) {
+            $sum = 0;
+            foreach ($group->categories as $category){
+                $sum += $category->plans->sortBy('created_at')->last()->cash;
+            }
+            $group->sumPlans = $sum;
+            $sumTotal += $sum;
+        }
+        $user->sumTotalPlans = $sumTotal;
+
+        return $user;
     }
 }

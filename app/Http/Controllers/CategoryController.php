@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Group;
+use App\Models\Plan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,22 +15,24 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
         $user = new User;
         $user = $user->getAuthUser();
 
+
         return view('category.index', [
             'groups' => $user->groups,
+            'user' => $user,
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Contracts\View\View
      */
     public function create()
     {
@@ -68,6 +71,11 @@ class CategoryController extends Controller
         $category->fill($validated);
         $category->save();
 
+        $plan = new Plan();
+        $plan->category_id = $category->id;
+        $plan->cash = 0;
+        $plan->save();
+
         return Redirect::route('category.index')->with('status', 'Category Added');
     }
 
@@ -86,7 +94,7 @@ class CategoryController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Contracts\View\View
      */
     public function edit($id)
     {
@@ -103,8 +111,10 @@ class CategoryController extends Controller
 
         return view('category.edit', [
             'groups' => $user->groups,
+            'user' => $user,
             'category' => $category,
             'statuses' => $category->categoryStatuses(),
+            'plans' => $category->plans->sortByDesc('created_at'),
         ]);
     }
 
@@ -132,7 +142,7 @@ class CategoryController extends Controller
 
         $category = Category::find($id);
 
-        if (Group::find($category->group_id)->user_id != Auth::id()) {
+        if ($category->group->user_id != Auth::id()) {
             return Redirect::route('category.index')->with('error', 'Access denied');
         }
 
