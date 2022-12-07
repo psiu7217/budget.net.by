@@ -21,48 +21,40 @@
                         </form>
 
 
-                        <form method="post" action="{{route('category.update', $category->id)}}" class="mt-6 space-y-6">
+                        <form method="post" action="{{route('check.update', $check->id)}}" class="mt-6 space-y-6">
                             @csrf
                             @method('patch')
 
                             <div>
+                                <x-input-label for="cash" :value="__('Cash*')" />
+                                <x-text-input id="cash" name="cash" type="number" step="0.01" class="mt-1 block w-full" :value="old('cash', $check->cash)" autofocus required />
+                                <x-input-error class="mt-2" :messages="$errors->get('cash')" />
+                            </div>
+
+                            <div>
                                 <x-input-label for="title" :value="__('Title*')" />
-                                <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" :value="old('title', $category->title)" required autofocus/>
+                                <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" :value="old('title', $check->title)" required />
                                 <x-input-error class="mt-2" :messages="$errors->get('title')" />
                             </div>
 
                             <div>
-                                <x-input-label for="group_id" :value="__('Group*')" />
-                                <select name="group_id" id="group_id" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm mt-1 block w-full" required>
-                                    @foreach($groups as $group)
-                                        <option value="{{ $group->id }}" @if($group->id == $category->group_id) selected @endif>{{ $group->title }}</option>
+                                <x-input-label for="category_id" :value="__('Category*')" />
+                                <select name="category_id" id="category_id" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm mt-1 block w-full" required>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}" @if($check->category_id == $category->id) selected @endif >{{ $category->title }}</option>
                                     @endforeach
                                 </select>
-                                <x-input-error class="mt-2" :messages="$errors->get('group_id')" />
+                                <x-input-error class="mt-2" :messages="$errors->get('category_id')" />
                             </div>
 
                             <div>
-                                <div class="flex">
-                                    <input name="hide" type="checkbox" id="hide" class="mx-1" @if($category->hide) checked @endif>
-                                    <x-input-label for="hide" :value="__('Just for me')" class="mx-3" />
-                                </div>
-                                <x-input-error class="mt-2" :messages="$errors->get('hide')" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="sort" :value="__('Sort')" />
-                                <x-text-input id="sort" name="sort" type="number" class="mt-1 block w-full" :value="old('sort', $category->sort)" />
-                                <x-input-error class="mt-2" :messages="$errors->get('sort')" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="status" :value="__('Status*')" />
-                                <select name="status" id="status" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm mt-1 block w-full" required>
-                                    @foreach($statuses as $key => $status)
-                                        <option value="{{ $key }}" @if($category->status == $key) selected @endif>{{ $status }}</option>
+                                <x-input-label for="purse_id" :value="__('Purse*')" />
+                                <select name="purse_id" id="purse_id" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm mt-1 block w-full" required>
+                                    @foreach($purses as $purse)
+                                        <option value="{{ $purse->id }}" @if($check->purse_id == $purse->id) selected @endif>{{ $purse->title }}</option>
                                     @endforeach
                                 </select>
-                                <x-input-error class="mt-2" :messages="$errors->get('status')" />
+                                <x-input-error class="mt-2" :messages="$errors->get('purse_id')" />
                             </div>
 
                             <div class="flex items-center justify-between gap-4">
@@ -75,46 +67,6 @@
                 </div>
             </div>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <section>
-                    @foreach($plans as $plan)
-                        <div class="space-y-6">
-                            <div class="@if ($loop->first) border-b-2 py-4 @else mt-4 @endif">
-
-                                @if ($loop->first)
-                                    <p class="text-gray-400 dark:text-gray-200 font-medium text-sm">Current plan for this month</p>
-                                @endif
-
-                                @if ($loop->iteration == 2)
-                                        <p class="text-gray-400 dark:text-gray-200 font-medium text-sm">Other plans</p>
-                                @endif
-
-                                <div class="flex justify-between">
-                                    <p class="text-gray-400 dark:text-gray-200">{{ $plan->cash }} BYN</p>
-                                    <p class="text-gray-400 dark:text-gray-200">{{ ($plan->created_at)->format('d-m-Y') }}</p>
-                                </div>
-                                @if ($loop->first)
-                                        <form method="post" action="{{route('plan.update', $plan->id)}}" class="border-t my-4 py-4">
-                                            @csrf
-                                            @method('patch')
-
-                                            <div>
-                                                <x-input-label for="cash" :value="__('Cash*')" />
-                                                <x-text-input id="cash" name="cash" type="number" step="0.01" class="mt-1 block w-full" :value="old('cash', $plan->cash)" required />
-                                                <x-input-error class="mt-2" :messages="$errors->get('cash')" />
-                                            </div>
-
-                                            <div class="flex items-center justify-between gap-4 mt-2">
-                                                <x-primary-button class="w-full">{{ __('Update Current Plan') }}</x-primary-button>
-                                            </div>
-
-                                        </form>
-                                @endif
-                            </div>
-                        </div>
-                    @endforeach
-                </section>
-            </div>
         </div>
     </div>
 

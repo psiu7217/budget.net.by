@@ -12,7 +12,7 @@ class IncomeController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -33,7 +33,7 @@ class IncomeController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Contracts\View\View
      */
     public function create()
     {
@@ -83,23 +83,16 @@ class IncomeController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Contracts\View\View
+     *
      */
     public function edit($id)
     {
         $user = new User;
         $user = $user->getAuthUser();
         $income = Income::find($id);
-        $checkUser = false;
 
-        foreach ($user->purses as $purse) {
-            if ($purse->id == $income->purse_id) {
-                $checkUser = true;
-                break;
-            }
-        }
-
-        if (!$checkUser) {
+        if ($income->purse->user_id != $user->id) {
             return Redirect::route('income.index')->with('error', 'Access denied');
         }
 

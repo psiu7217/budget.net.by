@@ -24,4 +24,14 @@ class Group extends Model
     {
         return $this->hasMany(Category::class);
     }
+
+    public function checks()
+    {
+        return $this->hasManyThrough(Check::class, Category::class);
+    }
+
+    public function plans()
+    {
+        return $this->hasManyThrough(Plan::class, Category::class);
+    }
 }

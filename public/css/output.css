@@ -1018,6 +1018,10 @@ select {
   align-items: center;
 }
 
+.\!items-center {
+  align-items: center !important;
+}
+
 .justify-end {
   justify-content: flex-end;
 }

@@ -2,15 +2,11 @@
     <x-slot name="header">
         <div class="flex justify-between">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Categories') }}
+                {{ __('Checks') }}
             </h2>
             <div class="flex">
-                <a href="{{ route('group.index') }}" class="mx-2 inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150">
-                    {{ __('My Groups') }}
-                </a>
-                <p></p>
-                <a href="{{ route('category.create') }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150">
-                    {{ __('Add Category') }}
+                <a href="{{ route('check.create') }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150">
+                    {{ __('Add Check') }}
                 </a>
             </div>
         </div>
@@ -31,35 +27,21 @@
                 </div>
             @endif
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">
-                    <div>
-                        {{ __('Total plans') }}
-                    </div>
-                    <div>
-                        {{ $user->sumTotalPlans }}
-                    </div>
-                </h3>
-            </div>
-
-            @foreach($groups as $group)
-                    <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                        <h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">
-                            <div>{{ $group->title }}</div>
-                            <div>{{ $group->sumPlans }}</div>
-                        </h3>
-                        @if(!count($group->categories))
-                            <p class="text-gray-900 dark:text-gray-100">No category</p>
-                        @endif
-
-                        @foreach($group->categories as $category)
-                            @include('category.partials.card')
-                        @endforeach
-                    </div>
+            @foreach($checks as $check)
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    @include('check.partials.card')
+                </div>
             @endforeach
 
-            @if(!$groups)
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">{{ __('No Groups') }}</h3>
+            @if(!count($checks))
+                    <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                        <h3 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                            {{ __('No Checks') }}
+                            <a href="{{ route('check.create') }}" class="border-b">
+                                {{ __('Add First Check') }}
+                            </a>
+                        </h3>
+                    </div>
             @endif
         </div>
     </div>

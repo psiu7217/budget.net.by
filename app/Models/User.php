@@ -63,6 +63,25 @@ class User extends Authenticatable
         return $this->hasMany(Group::class);
     }
 
+    public function categories()
+    {
+        return $this->hasManyThrough(Category::class, Group::class);
+    }
+
+    public function incomes()
+    {
+        return $this->hasManyThrough(Income::class, Purse::class);
+    }
+
+    public function checks()
+    {
+        return $this->hasManyThrough(Check::class, Purse::class);
+    }
+
+    /**
+     * Custom functions
+     * @return mixed
+     */
     public function getAuthUser()
     {
         $user = User::find(Auth::id());
