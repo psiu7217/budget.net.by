@@ -9,6 +9,11 @@ class Plan extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'category_id',
+        'cash',
+    ];
+
     public function category()
     {
         return $this->belongsTo(Category::class);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Group;
+use App\Models\Plan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,8 +22,10 @@ class CategoryController extends Controller
         $user = new User;
         $user = $user->getAuthUser();
 
+
         return view('category.index', [
             'groups' => $user->groups,
+            'user' => $user,
         ]);
     }
 
@@ -68,6 +71,11 @@ class CategoryController extends Controller
         $category->fill($validated);
         $category->save();
 
+        $plan = new Plan();
+        $plan->category_id = $category->id;
+        $plan->cash = 0;
+        $plan->save();
+
         return Redirect::route('category.index')->with('status', 'Category Added');
     }
 
@@ -103,8 +111,10 @@ class CategoryController extends Controller
 
         return view('category.edit', [
             'groups' => $user->groups,
+            'user' => $user,
             'category' => $category,
             'statuses' => $category->categoryStatuses(),
+            'plans' => $category->plans->sortByDesc('created_at'),
         ]);
     }
 
@@ -132,7 +142,7 @@ class CategoryController extends Controller
 
         $category = Category::find($id);
 
-        if (Group::find($category->group_id)->user_id != Auth::id()) {
+        if ($category->group->user_id != Auth::id()) {
             return Redirect::route('category.index')->with('error', 'Access denied');
         }
 

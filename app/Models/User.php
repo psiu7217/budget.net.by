@@ -65,6 +65,19 @@ class User extends Authenticatable
 
     public function getAuthUser()
     {
-        return User::find(Auth::id());
+        $user = User::find(Auth::id());
+
+        $sumTotal = 0;
+        foreach ($user->groups as $group) {
+            $sum = 0;
+            foreach ($group->categories as $category){
+                $sum += $category->plans->sortBy('created_at')->last()->cash;
+            }
+            $group->sumPlans = $sum;
+            $sumTotal += $sum;
+        }
+        $user->sumTotalPlans = $sumTotal;
+
+        return $user;
     }
 }

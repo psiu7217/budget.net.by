@@ -9,6 +9,13 @@ class Check extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'title',
+        'category_id',
+        'purse_id',
+        'cash',
+    ];
+
     public function category()
     {
         return $this->belongsTo(Category::class);
