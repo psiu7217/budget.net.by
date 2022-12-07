@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Family;
 use Illuminate\Http\Request;
 
 class CronController extends Controller
@@ -9,7 +10,8 @@ class CronController extends Controller
 
     public function updatePlan()
     {
-        echo 'Update Plan run';
-        exit;
+        $family = Family::find(1);
+        $family->name = 'Update success';
+        $family->save();
     }
 }
