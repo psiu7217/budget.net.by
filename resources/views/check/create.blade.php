@@ -44,8 +44,12 @@
                             <div>
                                 <x-input-label for="category_id" :value="__('Category*')" />
                                 <select name="category_id" id="category_id" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm mt-1 block w-full" required>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->title }}</option>
+                                    @foreach($groups as $group)
+                                        <optgroup label="{{ $group->title }}">
+                                            @foreach($group->categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->title }}</option>
+                                            @endforeach
+                                        </optgroup>
                                     @endforeach
                                 </select>
                                 <x-input-error class="mt-2" :messages="$errors->get('category_id')" />

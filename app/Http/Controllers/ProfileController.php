@@ -13,7 +13,7 @@ class ProfileController extends Controller
      * Display the user's profile form.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Contracts\View\View
      */
     public function edit(Request $request)
     {

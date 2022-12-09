@@ -84,10 +84,33 @@ class User extends Authenticatable
      */
     public function getAuthUser()
     {
-        $user = User::find(Auth::id());
+        $familyUser = User::find(Auth::id());
+        $userIds = [];
+        $userIds[] = $familyUser->id;
+
+        //Create family user
+        if ($familyUser->family && count($familyUser->family->users) > 1) {
+
+            foreach ($familyUser->family->users as $user) {
+                if ($user->id != $familyUser->id) {
+
+                    $userIds[] = $user->id;
+
+                    //Purses
+                    if ($user->purses) {
+                        foreach ($user->purses as $purse) {
+                            if (!$purse->hide) {
+                                $familyUser->purses->push($purse);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
         $sumTotal = 0;
-        foreach ($user->groups as $group) {
+        foreach ($familyUser->groups as $group) {
             $sum = 0;
             foreach ($group->categories as $category){
                 $sum += $category->plans->sortBy('created_at')->last()->cash;
@@ -95,8 +118,34 @@ class User extends Authenticatable
             $group->sumPlans = $sum;
             $sumTotal += $sum;
         }
-        $user->sumTotalPlans = $sumTotal;
+        $familyUser->sumTotalPlans = $sumTotal;
 
-        return $user;
+        $familyUser->userIds = $userIds;
+
+        return $familyUser;
+    }
+
+    public function familyUser()
+    {
+        $familyUser = User::getAuthUser();
+
+
+        if ($familyUser->family && count($familyUser->family->users) > 1) {
+
+            foreach ($familyUser->family->users as $user) {
+                if ($user->id != $familyUser->id) {
+
+                    //Purses
+                    if ($user->purses) {
+                        foreach ($user->purses as $purse) {
+                            $familyUser->purses->push($purse);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $familyUser;
     }
 }
+

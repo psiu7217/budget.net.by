@@ -98,26 +98,21 @@ class PurseController extends Controller
     {
         $user = new User;
         $user = $user->getAuthUser();
-        $selectPurse = null;
 
-        foreach ($user->purses as $purse) {
-            if ($purse->id == $id) {
-                $selectPurse = $purse;
-                $selectPurse->description = Crypt::decryptString($selectPurse->description);
-                $selectPurse->number = Crypt::decryptString($selectPurse->number);
-                $selectPurse->pin = Crypt::decryptString($selectPurse->pin);
-                break;
-            }
-        }
+        $purse = Purse::find($id);
 
-        if ($selectPurse == null) {
+        if ((!in_array($purse->user_id, $user->userIds)) || ($purse->hide && $purse->user_id != $user->id)) {
             return Redirect::route('purse.index')->with('error', 'Access denied');
         }
+
+        $purse->description = Crypt::decryptString($purse->description);
+        $purse->number = Crypt::decryptString($purse->number);
+        $purse->pin = Crypt::decryptString($purse->pin);
 
         return view('purse.edit', [
             'family' => $user->family,
             'user' => $user,
-            'purse' => $selectPurse,
+            'purse' => $purse,
         ]);
     }
 
@@ -164,12 +159,12 @@ class PurseController extends Controller
 
         $purse = Purse::find($id);
 
-        if ($user->id == $purse->user_id) {
-            $purse->delete();
-            return Redirect::route('purse.index')->with('status', 'Purse Delete');
-        } else {
+        if ((!in_array($purse->user_id, $user->userIds)) || ($purse->hide && $purse->user_id != $user->id)) {
             return Redirect::route('purse.index')->with('error', 'Access denied');
         }
+
+        $purse->delete();
+        return Redirect::route('purse.index')->with('status', 'Purse Delete');
 
     }
 }
