@@ -38,7 +38,7 @@ class CheckController extends Controller
         $user = $user->getAuthUser();
 
         return view('check.create', [
-            'categories' => $user->categories,
+            'groups' => $user->groups,
             'purses' => $user->purses,
         ]);
     }
@@ -97,7 +97,7 @@ class CheckController extends Controller
         }
 
         return view('check.edit', [
-            'categories' => $user->categories,
+            'groups' => $user->groups,
             'purses' => $user->purses,
             'check' => $check,
         ]);

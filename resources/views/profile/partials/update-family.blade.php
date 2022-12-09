@@ -9,6 +9,16 @@
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Update your family information or leave</p>
         </header>
 
+        <div class="mt-6">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ __('Members:') }}</h3>
+
+            <ul class="text-lg font-medium text-gray-900 dark:text-gray-100 mt-1 border-b">
+                @foreach($family->users as $user)
+                    <li>{{ $user->name }}</li>
+                @endforeach
+            </ul>
+        </div>
+
         <form method="post" action="{{route('family.update')}}" class="mt-6 space-y-6">
             @csrf
             @method('patch')

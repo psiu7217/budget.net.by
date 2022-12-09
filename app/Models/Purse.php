@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Redirect;
 
 class Purse extends Model
 {
@@ -54,9 +55,14 @@ class Purse extends Model
     public function updatePurse($data, $id)
     {
         $purse = Purse::find($id);
-        if ($purse->user_id != Auth::id()) {
-            return null;
+        $user = new User;
+        $user = $user->getAuthUser();
+
+        //Purse in family & Purse no hide
+        if ((!in_array($purse->user_id, $user->userIds)) || ($purse->hide && $purse->user_id != $user->id)) {
+            return false;
         }
+
         $purse->fill($data);
         $purse->description = Crypt::encryptString($data['description']);
         $purse->number = Crypt::encryptString($data['number']);
@@ -83,5 +89,19 @@ class Purse extends Model
         }
 
         return $sum;
+    }
+
+    public function getPurses(){
+        $user = User::find(Auth::id());
+
+        $purses = collect();
+
+        if ($user->family && count($user->family->users) > 1) {
+            foreach ($user->family->users as $item) {
+                $purses->push($item->purses);
+            }
+        }
+
+        dd($purses);
     }
 }
