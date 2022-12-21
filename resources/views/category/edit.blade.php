@@ -68,11 +68,21 @@
                             <div class="flex items-center justify-between gap-4">
                                 <x-primary-button>{{ __('Update Category') }}</x-primary-button>
                             </div>
-
                         </form>
+
 
                     </section>
                 </div>
+            </div>
+
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                <form method="post" action="{{ route('category.destroy', $category->id) }}" class="float-right">
+                    @csrf
+                    @method('delete')
+                    <x-danger-button>
+                        <x-zondicon-trash class="h-6 w-6"/> Delete category
+                    </x-danger-button>
+                </form>
             </div>
 
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
