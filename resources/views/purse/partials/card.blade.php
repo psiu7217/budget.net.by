@@ -8,7 +8,7 @@
                     <x-zondicon-view-hide style="width: 20px;margin-left: 15px;" />
                 @endif
             </span>
-            {{ $purse->sumIncomes() }} {{ $purse->currency }}
+            {{ $purse->balance() }} {{ $purse->currency }}
         </h2>
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{  $purse->description  }}</p>
     </header>
