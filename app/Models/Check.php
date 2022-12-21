@@ -36,10 +36,12 @@ class Check extends Model
      */
     public function accessVerification()
     {
-        if ($this->purse->user_id != Auth::id()) {
+        $user = new User;
+        $user = $user->getAuthUser();
+
+        if (!in_array($this->purse->user_id, $user->userIds)) {
             return false;
         }
-
         return true;
     }
 }
