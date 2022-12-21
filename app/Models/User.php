@@ -127,7 +127,9 @@ class User extends Authenticatable
         foreach ($familyUser->groups as $group) {
             $sum = 0;
             foreach ($group->categories as $category){
-                $sum += $category->plans->sortBy('created_at')->last()->cash;
+                if (isset($category->plans->sortBy('created_at')->last()->cash)) {
+                    $sum += $category->plans->sortBy('created_at')->last()->cash;
+                }
             }
             $group->sumPlans = $sum;
             $sumTotal += $sum;
