@@ -177,6 +177,8 @@ class CategoryController extends Controller
             return Redirect::route('category.index')->with('error', 'Access denied');
         }
 
+        Plan::where('category_id' ,$category->id)->delete();
+
         $category->delete();
 
         return Redirect::route('category.index')->with('status', 'Category deleted');
