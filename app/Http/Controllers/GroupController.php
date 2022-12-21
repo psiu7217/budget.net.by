@@ -13,7 +13,7 @@ class GroupController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory
      */
     public function index()
     {
@@ -21,8 +21,6 @@ class GroupController extends Controller
         $user = $user->getAuthUser();
 
         return view('group.index', [
-            'family' => $user->family,
-            'user' => $user,
             'groups' => $user->groups,
         ]);
     }
@@ -30,11 +28,10 @@ class GroupController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory
      */
     public function create()
     {
-
         return view('group.create');
     }
 
@@ -79,13 +76,16 @@ class GroupController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse
      */
     public function edit($id)
     {
         $group = Group::find($id);
 
-        if ($group->user_id != Auth::id()) {
+        $user = new User;
+        $user = $user->getAuthUser();
+
+        if (!in_array($group->user_id, $user->userIds)) {
             return Redirect::route('group.index')->with('error', 'Access denied');
         }
 
@@ -113,7 +113,10 @@ class GroupController extends Controller
 
         $group = Group::find($id);
 
-        if ($group->user_id != Auth::id()) {
+        $user = new User;
+        $user = $user->getAuthUser();
+
+        if (!in_array($group->user_id, $user->userIds)) {
             return Redirect::route('group.index')->with('error', 'Access denied');
         }
 
@@ -132,7 +135,10 @@ class GroupController extends Controller
     public function destroy($id)
     {
         $group = Group::find($id);
-        if ($group->user_id != Auth::id()) {
+        $user = new User;
+        $user = $user->getAuthUser();
+
+        if (!in_array($group->user_id, $user->userIds)) {
             return Redirect::route('group.index')->with('error', 'Access denied');
         }
 

@@ -105,7 +105,8 @@ class CategoryController extends Controller
         if (!$category) {
             return Redirect::route('category.index')->with('error', 'Access denied');
         }
-        if (Group::find($category->group_id)->user_id != Auth::id()) {
+
+        if (!in_array($category->group->user_id, $user->userIds)) {
             return Redirect::route('category.index')->with('error', 'Access denied');
         }
 
@@ -141,8 +142,10 @@ class CategoryController extends Controller
         }
 
         $category = Category::find($id);
+        $user = new User;
+        $user = $user->getAuthUser();
 
-        if ($category->group->user_id != Auth::id()) {
+        if (!in_array($category->group->user_id, $user->userIds)) {
             return Redirect::route('category.index')->with('error', 'Access denied');
         }
 
@@ -168,7 +171,9 @@ class CategoryController extends Controller
             return Redirect::route('category.index')->with('error', 'Access denied');
         }
 
-        if (Group::find($category->group_id)->user_id != Auth::id()) {
+        $user = new User;
+        $user = $user->getAuthUser();
+        if (!in_array($category->group->user_id, $user->userIds)) {
             return Redirect::route('category.index')->with('error', 'Access denied');
         }
 

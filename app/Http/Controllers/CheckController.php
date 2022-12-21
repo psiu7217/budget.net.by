@@ -21,9 +21,7 @@ class CheckController extends Controller
         $user = $user->getAuthUser();
 
         return view('check.index', [
-            'groups' => $user->groups,
             'checks' => $user->checks->sortByDesc('created_at'),
-            'user' => $user,
         ]);
     }
 

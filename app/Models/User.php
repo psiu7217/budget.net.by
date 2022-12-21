@@ -104,6 +104,20 @@ class User extends Authenticatable
                             }
                         }
                     }
+
+                    //Groups
+                    if ($user->groups) {
+                        foreach ($user->groups as $group) {
+                            $familyUser->groups->push($group);
+                        }
+                    }
+
+                    //Groups
+                    if ($user->checks) {
+                        foreach ($user->checks as $check) {
+                            $familyUser->checks->push($check);
+                        }
+                    }
                 }
             }
         }

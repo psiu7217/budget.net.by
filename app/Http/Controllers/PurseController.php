@@ -29,8 +29,6 @@ class PurseController extends Controller
 
 
         return view('purse.index', [
-            'family' => $user->family,
-            'user' => $user,
             'purses' => $user->purses,
         ]);
     }
@@ -110,8 +108,6 @@ class PurseController extends Controller
         $purse->pin = Crypt::decryptString($purse->pin);
 
         return view('purse.edit', [
-            'family' => $user->family,
-            'user' => $user,
             'purse' => $purse,
         ]);
     }
