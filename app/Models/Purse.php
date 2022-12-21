@@ -30,6 +30,13 @@ class Purse extends Model
         return $this->hasMany(Income::class);
     }
 
+    public function checks()
+    {
+        return $this->hasMany(Check::class);
+    }
+
+
+
     public function addPurse($data)
     {
         $purse = new Purse();
@@ -83,25 +90,15 @@ class Purse extends Model
 
     public function sumIncomes()
     {
-        $sum = 0;
-        foreach ($this->incomes as $income) {
-            $sum += $income->cash;
-        }
-
-        return $sum;
+        return $this->incomes->sum('cash');
     }
 
-    public function getPurses(){
-        $user = User::find(Auth::id());
+    public function sumChecks()
+    {
+        return $this->checks->sum('cash');
+    }
 
-        $purses = collect();
-
-        if ($user->family && count($user->family->users) > 1) {
-            foreach ($user->family->users as $item) {
-                $purses->push($item->purses);
-            }
-        }
-
-        dd($purses);
+    public function balance() {
+        return $this->incomes->sum('cash') - $this->checks->sum('cash');
     }
 }

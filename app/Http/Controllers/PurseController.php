@@ -109,6 +109,7 @@ class PurseController extends Controller
 
         return view('purse.edit', [
             'purse' => $purse,
+            'checks' => $purse->checks->sortByDesc('created_at'),
         ]);
     }
 
