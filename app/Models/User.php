@@ -78,6 +78,7 @@ class User extends Authenticatable
         return $this->hasManyThrough(Check::class, Purse::class);
     }
 
+
     /**
      * Custom functions
      * @return mixed
@@ -112,7 +113,7 @@ class User extends Authenticatable
                         }
                     }
 
-                    //Groups
+                    //Checks
                     if ($user->checks) {
                         foreach ($user->checks as $check) {
                             $familyUser->checks->push($check);
@@ -138,30 +139,11 @@ class User extends Authenticatable
 
         $familyUser->userIds = $userIds;
 
-        return $familyUser;
-    }
-
-    public function familyUser()
-    {
-        $familyUser = User::getAuthUser();
-
-
-        if ($familyUser->family && count($familyUser->family->users) > 1) {
-
-            foreach ($familyUser->family->users as $user) {
-                if ($user->id != $familyUser->id) {
-
-                    //Purses
-                    if ($user->purses) {
-                        foreach ($user->purses as $purse) {
-                            $familyUser->purses->push($purse);
-                        }
-                    }
-                }
-            }
-        }
+        //sort
+        $familyUser->groups = $familyUser->groups->sortByDesc('sort');
 
         return $familyUser;
     }
+
 }
 

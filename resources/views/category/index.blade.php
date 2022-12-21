@@ -52,7 +52,7 @@
                             <p class="text-gray-900 dark:text-gray-100">No category</p>
                         @endif
 
-                        @foreach($group->categories as $category)
+                        @foreach($group->categories->sortByDesc('sort') as $category)
                             @include('category.partials.card')
                         @endforeach
                     </div>
