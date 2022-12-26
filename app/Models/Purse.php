@@ -83,6 +83,8 @@ class Purse extends Model
             $purse->hide = 0;
         }
 
+        $purse->cash = $purse->balance();
+
         $purse->save();
 
         return $purse;
