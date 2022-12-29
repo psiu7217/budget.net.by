@@ -16,10 +16,10 @@ class HomeController extends Controller
         $user = new User;
         $user = $user->getAuthUser();
 
-        
+
 
         return view('dashboard', [
-            'checks' => $user->checks->sortByDesc('created_at'),
+            'checks' => $user->checks->sortByDesc('created_at')->splice(0, 5),
         ]);
     }
 }
