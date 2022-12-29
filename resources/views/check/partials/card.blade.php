@@ -11,7 +11,9 @@
     <div class="none">
         <div class="mt-1 text-sm text-gray-600 dark:text-gray-400 mr-2">{{  $check->category->group->title  }} - {{  $check->category->title  }}</div>
         <div class="flex justify-between">
+
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{  $check->purse->user->name  }} - <b>{{  $check->purse->title  }}</b></p>
+
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{  $check->created_at  }}</p>
         </div>
         <div class="flex justify-between pt-6">
