@@ -130,6 +130,7 @@ class PurseController extends Controller
             'number' => '',
             'pin' => '',
             'currency' => '',
+            'cash' => '',
         ]);
 
         $purse = new Purse();

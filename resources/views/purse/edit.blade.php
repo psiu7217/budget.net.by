@@ -60,6 +60,12 @@
                             </div>
 
                             <div>
+                                <x-input-label for="cash" :value="__('Cash*')" />
+                                <x-text-input id="cash" name="cash" type="number" step="0.01" class="mt-1 block w-full" :value="old('cash', $purse->cash)" />
+                                <x-input-error class="mt-2" :messages="$errors->get('cash')" />
+                            </div>
+
+                            <div>
                                 <x-input-label for="hide" :value="__('Just for me')" />
                                 <input name="hide" type="checkbox" id="hide" @if($purse->hide) checked @endif>
                                 <x-input-error class="mt-2" :messages="$errors->get('hide')" />

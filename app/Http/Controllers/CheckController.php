@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Check;
+use App\Models\Purse;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -61,7 +62,11 @@ class CheckController extends Controller
         $check->fill($validated);
         $check->save();
 
-        return Redirect::route('check.index')->with('status', 'Check Added');
+        //Minus purse cash
+        $purse = new Purse;
+        $purse->updateCash($check->purse_id, $check->cash, false);
+
+        return Redirect::route('check.create')->with('status', 'Check Added');
     }
 
     /**
@@ -127,6 +132,10 @@ class CheckController extends Controller
             return Redirect::route('check.index')->with('error', 'Access denied');
         }
 
+        //Edit purses cash
+        $purse = new Purse;
+        $purse->updateCash($check->purse_id, $check->cash - $validated['cash']);
+
         $check->fill($validated);
         $check->save();
 
@@ -149,6 +158,10 @@ class CheckController extends Controller
         if (!$check->accessVerification()) {
             return Redirect::route('check.index')->with('error', 'Access denied');
         }
+
+        //Plus purse cash
+        $purse = new Purse;
+        $purse->updateCash($check->purse_id, $check->cash);
 
         $check->delete();
 
