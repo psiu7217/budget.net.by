@@ -61,7 +61,7 @@ class CheckController extends Controller
         $check->fill($validated);
         $check->save();
 
-        return Redirect::route('check.index')->with('status', 'Check Added');
+        return Redirect::route('check.create')->with('status', 'Check Added');
     }
 
     /**
