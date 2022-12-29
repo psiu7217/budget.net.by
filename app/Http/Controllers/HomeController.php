@@ -16,10 +16,19 @@ class HomeController extends Controller
         $user = new User;
         $user = $user->getAuthUser();
 
+        //Purses not hidden
+        $purses = collect();
+        foreach ($user->purses as $purse) {
+            if (!$purse->hide) {
+                $purses->push($purse);
+            }
+        }
 
+//        dd($purses->sum('cash'));
 
         return view('dashboard', [
             'checks' => $user->checks->sortByDesc('created_at')->splice(0, 5),
+            'purses' => $purses,
         ]);
     }
 }

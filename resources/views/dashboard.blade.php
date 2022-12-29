@@ -31,14 +31,19 @@
 
     <div class="py-12 pt-1">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __('Last checks') }}
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg flex justify-between">
+                <div class="p-6 text-gray-900 dark:text-gray-100 text-xl font-semibold">
+                    {{ __('Purses') }}
                 </div>
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __('Last checks') }}
+                <div class="p-6 text-lg font-medium text-gray-900 dark:text-gray-100 flex">
+                    {{ $purses->sum('cash') }} BYN
                 </div>
             </div>
+            @foreach($purses as $purse)
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    @include('purse.partials.home-card')
+                </div>
+            @endforeach
         </div>
     </div>
 
