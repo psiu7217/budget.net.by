@@ -18,6 +18,7 @@ class Purse extends Model
         'user_id',
         'hide',
         'currency',
+        'cash',
     ];
 
     public function user()
@@ -83,11 +84,21 @@ class Purse extends Model
             $purse->hide = 0;
         }
 
-        $purse->cash = $purse->balance();
-
         $purse->save();
 
         return $purse;
+    }
+
+    public function updateCash($id, $cash, $plus = true)
+    {
+        $purse = Purse::find($id);
+        if ($plus) {
+            $purse->cash += $cash;
+        }else {
+            $purse->cash -= $cash;
+        }
+
+        $purse->save();
     }
 
     public function sumIncomes()
