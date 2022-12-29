@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Income;
+use App\Models\Purse;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -64,6 +65,10 @@ class IncomeController extends Controller
         $income = new Income();
         $income->fill($validated);
         $income->save();
+
+        //Add Purse cash
+        $purse = new Purse;
+        $purse->updateCash($validated['purse_id'], $validated['cash']);
 
         return Redirect::route('income.index')->with('status', 'Income Added');
     }
@@ -127,6 +132,10 @@ class IncomeController extends Controller
             return Redirect::route('income.index')->with('error', 'Access denied');
         }
 
+        //Edit purses cash
+        $purse = new Purse;
+        $purse->updateCash($income->purse_id, $validated['cash'] - $income->cash);
+
         $income->fill($validated);
         $income->save();
         return Redirect::route('income.index')->with('status', 'Income updated');
@@ -149,6 +158,10 @@ class IncomeController extends Controller
         if ((!in_array($income->purse->user_id, $user->userIds)) || ($income->purse->hide && $income->purse->user_id != $user->id)) {
             return Redirect::route('income.index')->with('error', 'Access denied');
         }
+
+        //Minus cash Purse
+        $purse = new Purse;
+        $purse->updateCash($income->purse_id, $income->cash, false);
 
         $income->delete();
         return Redirect::route('income.index')->with('status', 'Income Deleted');
