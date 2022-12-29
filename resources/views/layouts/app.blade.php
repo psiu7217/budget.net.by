@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,24 +13,23 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        <link href="/css/please-wait.css" rel="stylesheet">
-        <link href="/css/spinkit.min.css" rel="stylesheet">
+{{--        <link href="/css/please-wait.css" rel="stylesheet">--}}
+{{--        <link href="/css/spinkit.min.css" rel="stylesheet">--}}
 
         <link href="/css/output.css" rel="stylesheet">
         <link href="/css/custom.css" rel="stylesheet">
-        <script src="/js/script.js"></script>
 
     </head>
     <body class="font-sans antialiased">
-    <div class="inner" ng-view></div>
-    <script type="text/javascript" src="/js/please-wait.min.js"></script>
-        <script type="text/javascript">
-            window.loading_screen = window.pleaseWait({
-                logo: false,
-                backgroundColor: '#000',
-                loadingHtml: '<div class="sk-cube-grid"><div class="sk-cube sk-cube1"></div><div class="sk-cube sk-cube2"></div><div class="sk-cube sk-cube3"></div><div class="sk-cube sk-cube4"></div><div class="sk-cube sk-cube5"></div><div class="sk-cube sk-cube6"></div><div class="sk-cube sk-cube7"></div><div class="sk-cube sk-cube8"></div><div class="sk-cube sk-cube9"></div></div>',
-            });
-        </script>
+{{--    <div class="inner" ng-view></div>--}}
+{{--    <script type="text/javascript" src="/js/please-wait.min.js"></script>--}}
+{{--        <script type="text/javascript">--}}
+{{--            window.loading_screen = window.pleaseWait({--}}
+{{--                logo: "favicon.png",--}}
+{{--                backgroundColor: '#000',--}}
+{{--                loadingHtml: '<div class="sk-cube-grid"><div class="sk-cube sk-cube1"></div><div class="sk-cube sk-cube2"></div><div class="sk-cube sk-cube3"></div><div class="sk-cube sk-cube4"></div><div class="sk-cube sk-cube5"></div><div class="sk-cube sk-cube6"></div><div class="sk-cube sk-cube7"></div><div class="sk-cube sk-cube8"></div><div class="sk-cube sk-cube9"></div></div>',--}}
+{{--            });--}}
+{{--        </script>--}}
 
 
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -53,8 +52,9 @@
             @include('layouts.footer')
         </div>
 
-        <script>
-            window.loading_screen.finish();
-        </script>
+{{--        <script>window.loading_screen.finish();</script>--}}
+
+        <script src="/js/script.js"></script>
+
     </body>
 </html>
