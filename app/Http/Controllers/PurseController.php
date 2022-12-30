@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Purse;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -160,6 +161,16 @@ class PurseController extends Controller
         if ((!in_array($purse->user_id, $user->userIds)) || ($purse->hide && $purse->user_id != $user->id)) {
             return Redirect::route('purse.index')->with('error', 'Access denied');
         }
+
+
+        foreach ($purse->fromTransactions as $transaction) {
+            $transaction->delete();
+        }
+
+        foreach ($purse->toTransactions as $transaction) {
+            $transaction->delete();
+        }
+
 
         $purse->delete();
         return Redirect::route('purse.index')->with('status', 'Purse Delete');
