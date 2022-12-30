@@ -11,6 +11,7 @@ use App\Http\Controllers\CheckController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\CronController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('category', CategoryController::class);
     Route::resource('check', CheckController::class);
     Route::resource('plan', PlanController::class);
+    Route::resource('transaction', TransactionController::class);
 });
 
 

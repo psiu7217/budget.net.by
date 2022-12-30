@@ -27,7 +27,7 @@ class HomeController extends Controller
 //        dd($purses->sum('cash'));
 
         return view('dashboard', [
-            'checks' => $user->checks->sortByDesc('created_at')->splice(0, 5),
+            'checks' => $user->checks->sortByDesc('created_at')->splice(0, 3),
             'purses' => $purses,
         ]);
     }

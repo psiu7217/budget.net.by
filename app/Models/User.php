@@ -73,6 +73,11 @@ class User extends Authenticatable
         return $this->hasManyThrough(Income::class, Purse::class);
     }
 
+    public function transactions()
+    {
+        return $this->hasManyThrough(Transaction::class, Purse::class, 'user_id', 'from_purse_id');
+    }
+
     public function checks()
     {
         return $this->hasManyThrough(Check::class, Purse::class);

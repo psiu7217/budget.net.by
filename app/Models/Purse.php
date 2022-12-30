@@ -36,6 +36,16 @@ class Purse extends Model
         return $this->hasMany(Check::class);
     }
 
+    public function transactionsFrom()
+    {
+        return $this->hasMany(Transaction::class,'from_purse_id');
+    }
+
+    public function transactionsTo()
+    {
+        return $this->hasMany(Transaction::class,'to_purse_id');
+    }
+
 
 
     public function addPurse($data)
