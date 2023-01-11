@@ -82,9 +82,6 @@ class PlanController extends Controller
         if (!in_array($plan->category->group->user_id, $user->userIds)) {
             return Redirect::route('category.index')->with('error', 'Access denied');
         }
-        if ($plan->category->group->user_id != Auth::id()) {
-            return Redirect::route('category.edit', $plan->category->id)->with('error', 'Access denied');
-        }
 
         $plan->fill($validated);
         $plan->save();
