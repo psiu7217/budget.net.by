@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Plan;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -76,6 +77,11 @@ class PlanController extends Controller
         ]);
 
         $plan = Plan::find($id);
+        $user = new User;
+        $user = $user->getAuthUser();
+        if (!in_array($plan->category->group->user_id, $user->userIds)) {
+            return Redirect::route('category.index')->with('error', 'Access denied');
+        }
         if ($plan->category->group->user_id != Auth::id()) {
             return Redirect::route('category.edit', $plan->category->id)->with('error', 'Access denied');
         }
