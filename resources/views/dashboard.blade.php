@@ -47,6 +47,33 @@
         </div>
     </div>
 
+    <div class="py-12 pt-1">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg flex justify-between">
+                <div class="p-6 text-gray-900 dark:text-gray-100 text-xl font-semibold">
+                    {{ __('Categories') }}
+                </div>
+                <div class="p-6 text-lg font-medium text-gray-900 dark:text-gray-100 flex">
+                    {{ $user->sumTotalPlans }} BYN
+                </div>
+            </div>
+            @foreach($groups as $group)
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">
+                        <div>{{ $group->title }}</div>
+                        <div>{{ $group->sumPlans }} BYN</div>
+                    </h3>
+                    @if(!count($group->categories))
+                        <p class="text-gray-900 dark:text-gray-100">No category</p>
+                    @endif
+
+                    @foreach($group->categories->sortByDesc('sort') as $category)
+                        @include('category.partials.card')
+                    @endforeach
+                </div>
+            @endforeach
+        </div>
+    </div>
 
     <div class="py-12 pt-1">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">

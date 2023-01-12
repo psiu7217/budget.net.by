@@ -29,6 +29,8 @@ class HomeController extends Controller
         return view('dashboard', [
             'checks' => $user->checks->sortByDesc('created_at')->splice(0, 3),
             'purses' => $purses,
+            'groups' => $user->groups,
+            'user' => $user,
         ]);
     }
 }
