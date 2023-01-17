@@ -76,7 +76,7 @@
             </div>
 
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <form method="post" action="{{ route('category.destroy', $category->id) }}" class="float-right">
+                <form method="post" action="{{ route('category.destroy', $category->id) }}">
                     @csrf
                     @method('delete')
                     <x-danger-button>
@@ -84,6 +84,13 @@
                     </x-danger-button>
                 </form>
             </div>
+
+
+            @foreach($category->checks->where('created_at', '>', $user->start_date_month) as $check)
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    @include('check.partials.card')
+                </div>
+            @endforeach
 
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <section>
