@@ -86,6 +86,9 @@
             </div>
 
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                <div class="p-2 text-gray-900 dark:text-gray-100 text-xl font-semibold">
+                    {{ __('Checks in this month') }}
+                </div>
                 @foreach($category->checks->where('created_at', '>', $user->start_date_month) as $check)
                     @include('check.partials.card')
                @endforeach
