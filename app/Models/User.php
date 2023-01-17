@@ -145,6 +145,19 @@ class User extends Authenticatable
 
         $familyUser->userIds = $userIds;
 
+
+        //First day month
+        if ($familyUser->family) {
+            $familyUser->first_day = $familyUser->family->first_day;
+        }
+
+
+        //Start date current month
+        $familyUser->start_date_month = date('Y-m-' . $familyUser->first_day);
+        if (date('Y-m-d') < $familyUser->start_date_month) {
+            $familyUser->start_date_month = date('Y-m-' . $familyUser->first_day, strtotime(' -1 month'));
+        }
+
         //sort
         $familyUser->groups = $familyUser->groups->sortByDesc('sort');
 
