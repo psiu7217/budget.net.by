@@ -54,7 +54,7 @@
                     {{ __('Categories') }}
                 </div>
                 <div class="p-6 text-lg font-medium text-gray-900 dark:text-gray-100 flex">
-                    {{ $user->sumTotalPlans }} BYN
+                    {{ $user->sumTotalChecks }} / {{ $user->sumTotalPlans }} BYN
                 </div>
             </div>
             @foreach($groups as $group)

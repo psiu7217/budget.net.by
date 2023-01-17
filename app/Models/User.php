@@ -130,7 +130,9 @@ class User extends Authenticatable
         }
 
 
-        $sumTotal = 0;
+        //Sum plans & checks
+        $sumTotalPlans = 0;
+        $sumTotalChecks = 0;
         foreach ($familyUser->groups as $group) {
             $sumPlan = 0;
             $sumCheck = 0;
@@ -142,9 +144,11 @@ class User extends Authenticatable
             }
             $group->sumPlans = $sumPlan;
             $group->sumChecks = $sumCheck;
-            $sumTotal += $sumPlan;
+            $sumTotalPlans += $sumPlan;
+            $sumTotalChecks += $sumCheck;
         }
-        $familyUser->sumTotalPlans = $sumTotal;
+        $familyUser->sumTotalPlans = $sumTotalPlans;
+        $familyUser->sumTotalChecks = $sumTotalChecks;
 
         $familyUser->userIds = $userIds;
 
