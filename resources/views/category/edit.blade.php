@@ -85,12 +85,11 @@
                 </form>
             </div>
 
-
-            @foreach($category->checks->where('created_at', '>', $user->start_date_month) as $check)
-                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                @foreach($category->checks->where('created_at', '>', $user->start_date_month) as $check)
                     @include('check.partials.card')
-                </div>
-            @endforeach
+               @endforeach
+            </div>
 
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <section>
