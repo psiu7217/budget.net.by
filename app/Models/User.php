@@ -129,6 +129,18 @@ class User extends Authenticatable
             }
         }
 
+        //First day month
+        if ($familyUser->family) {
+            $familyUser->first_day = $familyUser->family->first_day;
+        }
+
+
+        //Start date current month
+        $familyUser->start_date_month = date('Y-m-' . $familyUser->first_day);
+        if (date('Y-m-d') < $familyUser->start_date_month) {
+            $familyUser->start_date_month = date('Y-m-' . $familyUser->first_day, strtotime(' -1 month'));
+        }
+
 
         //Sum plans & checks
         $sumTotalPlans = 0;
@@ -140,7 +152,7 @@ class User extends Authenticatable
                 if (isset($category->plans->sortBy('created_at')->last()->cash)) {
                     $sumPlan += $category->plans->sortBy('created_at')->last()->cash;
                 }
-                $sumCheck += $category->checks->sum('cash');
+                $sumCheck += $category->checks->where('created_at', '>', $familyUser->start_date_month)->sum('cash');
             }
             $group->sumPlans = $sumPlan;
             $group->sumChecks = $sumCheck;
@@ -153,17 +165,7 @@ class User extends Authenticatable
         $familyUser->userIds = $userIds;
 
 
-        //First day month
-        if ($familyUser->family) {
-            $familyUser->first_day = $familyUser->family->first_day;
-        }
 
-
-        //Start date current month
-        $familyUser->start_date_month = date('Y-m-' . $familyUser->first_day);
-        if (date('Y-m-d') < $familyUser->start_date_month) {
-            $familyUser->start_date_month = date('Y-m-' . $familyUser->first_day, strtotime(' -1 month'));
-        }
 
         //sort
         $familyUser->groups = $familyUser->groups->sortByDesc('sort');
