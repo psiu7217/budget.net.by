@@ -43,7 +43,7 @@
         </div>
 
         <div>
-            <x-input-label for="first_day" :value="__('First day mounth')" />
+            <x-input-label for="first_day" :value="__('First day month')" />
             <x-text-input id="first_day" name="first_day" type="text" class="mt-1 block w-full" :value="old('first_day', $user->first_day)" required autofocus autocomplete="first_day" />
             <x-input-error class="mt-2" :messages="$errors->get('first_day')" />
         </div>

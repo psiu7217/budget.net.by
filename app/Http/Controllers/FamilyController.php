@@ -74,8 +74,13 @@ class FamilyController extends Controller
             return Redirect::route('profile.edit')->withErrors(['name' => 'No family']);
         }
 
-        $request->user()->family->name = $validated['name'];
-        $request->user()->family->save();
+        $family = Family::find($request->user()->family->id);
+        $family->fill($validated);
+        $family->save();
+
+//        $request->user()->family->name = $validated['name'];
+//        $request->user()->family->first_day = $validated['first_day'];
+//        $request->user()->family->save();
 
         return Redirect::route('profile.edit')->with('status', 'family-updated');
     }
@@ -111,6 +116,7 @@ class FamilyController extends Controller
     {
         return $request->validate([
             'name' => 'required|max:255|min:2',
+            'first_day' => 'required|max:31|min:1|numeric',
         ]);
     }
 }
