@@ -14,7 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('family_id')->nullable();
+            $table->integer('first_day')->default(1);
+        });
+
+        Schema::table('families', function (Blueprint $table) {
+            $table->integer('first_day')->default(1);
         });
     }
 
@@ -26,7 +30,11 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('family_id');
+            $table->dropColumn('first_day');
+        });
+
+        Schema::table('families', function (Blueprint $table) {
+            $table->dropColumn('first_day');
         });
     }
 };

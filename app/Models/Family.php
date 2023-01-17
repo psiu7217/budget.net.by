@@ -17,6 +17,7 @@ class Family extends Model
      */
     protected $fillable = [
         'name',
+        'first_day',
     ];
 
     /**
