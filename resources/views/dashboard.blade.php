@@ -61,7 +61,7 @@
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                     <h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">
                         <div>{{ $group->title }}</div>
-                        <div>{{ $group->sumPlans }} BYN</div>
+                        <div>{{ $group->sumChecks }}  / {{ $group->sumPlans }} BYN</div>
                     </h3>
                     @if(!count($group->categories))
                         <p class="text-gray-900 dark:text-gray-100">No category</p>

@@ -132,14 +132,17 @@ class User extends Authenticatable
 
         $sumTotal = 0;
         foreach ($familyUser->groups as $group) {
-            $sum = 0;
+            $sumPlan = 0;
+            $sumCheck = 0;
             foreach ($group->categories as $category){
                 if (isset($category->plans->sortBy('created_at')->last()->cash)) {
-                    $sum += $category->plans->sortBy('created_at')->last()->cash;
+                    $sumPlan += $category->plans->sortBy('created_at')->last()->cash;
                 }
+                $sumCheck += $category->checks->sum('cash');
             }
-            $group->sumPlans = $sum;
-            $sumTotal += $sum;
+            $group->sumPlans = $sumPlan;
+            $group->sumChecks = $sumCheck;
+            $sumTotal += $sumPlan;
         }
         $familyUser->sumTotalPlans = $sumTotal;
 
