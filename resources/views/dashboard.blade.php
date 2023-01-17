@@ -68,7 +68,7 @@
                     @endif
 
                     @foreach($group->categories->sortByDesc('sort') as $category)
-                        @include('category.partials.card')
+                        @include('home.category.card')
                     @endforeach
                 </div>
             @endforeach
