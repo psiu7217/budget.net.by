@@ -53,13 +53,13 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100 text-xl font-semibold">
                     {{ __('Categories') }}
                 </div>
-                <div class="p-6 text-lg font-medium text-gray-900 dark:text-gray-100 flex">
+                <div class="p-6 text-lg font-medium text-gray-900 @if($user->sumTotalChecks <= $user->sumTotalPlans) dark:text-gray-100 @else dark:text-red-400 @endif flex">
                     {{ $user->sumTotalChecks }} / {{ $user->sumTotalPlans }} BYN
                 </div>
             </div>
             @foreach($groups as $group)
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                    <h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">
+                    <h3 class="mb-4 text-lg font-medium text-gray-900 @if($group->sumChecks <= $group->sumPlans) dark:text-gray-100 @else dark:text-red-400 @endif flex justify-between">
                         <div>{{ $group->title }}</div>
                         <div>{{ $group->sumChecks }}  / {{ $group->sumPlans }} BYN</div>
                     </h3>
