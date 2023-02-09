@@ -128,6 +128,7 @@ class PlanController extends Controller
                 $currentPlan->save();
 
                 $plan->created_at = Carbon::now();
+                $plan->cash_fact = 0;
                 $plan->save();
             }
         }
