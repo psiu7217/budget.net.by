@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Check;
 use App\Models\Plan;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -98,5 +100,57 @@ class PlanController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    /**
+     * Update all plans for all categories
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function closeMonth()
+    {
+        $user = new User;
+        $user = $user->getAuthUser();
+
+        foreach ($user->groups as $group) {
+            foreach ($group->categories as $category){
+                $currentPlan = $category->plans->sortByDesc('created_at')->first();
+                $plan = $currentPlan->replicate();
+
+                $sumChecks = Check::where('created_at', '>', date('Y-m-d', strtotime($currentPlan->created_at)))
+                    ->where('created_at', '<', Carbon::now())
+                    ->where('category_id', '=', $plan->category_id)
+                    ->get()->sum('cash');
+
+
+                $currentPlan->cash_fact = $sumChecks;
+                $currentPlan->save();
+
+                $plan->created_at = Carbon::now();
+                $plan->save();
+            }
+        }
+
+        return Redirect::route('profile.edit')->with('status', 'Month Closed');
+    }
+
+    /**
+     * Cansel Update all plans for all categories
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function cancelCloseMonth()
+    {
+        $user = new User;
+        $user = $user->getAuthUser();
+
+        foreach ($user->groups as $group) {
+            foreach ($group->categories as $category){
+                $category->plans->sortByDesc('created_at')->first()->delete();
+            }
+        }
+
+        return Redirect::route('profile.edit')->with('status', 'Cansel Month Closed');
     }
 }

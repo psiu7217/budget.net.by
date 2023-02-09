@@ -48,7 +48,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('group', GroupController::class);
     Route::resource('category', CategoryController::class);
     Route::resource('check', CheckController::class);
+
     Route::resource('plan', PlanController::class);
+    Route::post('/plan/close-month', [PlanController::class, 'closeMonth'])->name('plan.close_month');
+    Route::post('/plan/cansel-close-month', [PlanController::class, 'cancelCloseMonth'])->name('plan.cancel_close_month');
+
     Route::resource('transaction', TransactionController::class);
 });
 

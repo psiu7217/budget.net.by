@@ -76,16 +76,6 @@
             </div>
 
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <form method="post" action="{{ route('category.destroy', $category->id) }}">
-                    @csrf
-                    @method('delete')
-                    <x-danger-button>
-                        <x-zondicon-trash class="h-6 w-6"/> Delete category
-                    </x-danger-button>
-                </form>
-            </div>
-
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="p-2 text-gray-900 dark:text-gray-100 text-xl font-semibold">
                     {{ __('Checks in this month') }}
                 </div>
@@ -109,7 +99,9 @@
                                 @endif
 
                                 <div class="flex justify-between">
-                                    <p class="text-gray-400 dark:text-gray-200">{{ $plan->cash }} BYN</p>
+                                    <p class="text-gray-400 @if($plan->cash_fact <= $plan->cash) dark:text-gray-100 @else dark:text-red-400 @endif">
+                                        {{ $plan->cash_fact }} / {{ $plan->cash }} BYN
+                                    </p>
                                     <p class="text-gray-400 dark:text-gray-200">{{ ($plan->created_at)->format('d-m-Y') }}</p>
                                 </div>
                                 @if ($loop->first)
@@ -134,6 +126,17 @@
                     @endforeach
                 </section>
             </div>
+
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                <form method="post" action="{{ route('category.destroy', $category->id) }}">
+                    @csrf
+                    @method('delete')
+                    <x-danger-button>
+                        <x-zondicon-trash class="h-6 w-6"/> Delete category
+                    </x-danger-button>
+                </form>
+            </div>
+
         </div>
     </div>
 
