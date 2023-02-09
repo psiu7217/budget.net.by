@@ -91,11 +91,11 @@
                             <div class="@if ($loop->first) border-b-2 py-4 @else mt-4 @endif">
 
                                 @if ($loop->first)
-                                    <p class="text-gray-400 dark:text-gray-200 font-medium text-sm">Current plan for this month</p>
+                                    <p class="text-gray-400 dark:text-gray-200 font-medium text-sm">{{ __('Current plan for this month') }}</p>
                                 @endif
 
                                 @if ($loop->iteration == 2)
-                                        <p class="text-gray-400 dark:text-gray-200 font-medium text-sm">Other plans</p>
+                                        <p class="text-gray-400 dark:text-gray-200 font-medium text-sm">{{ __('Previous Plans') }}</p>
                                 @endif
 
                                 <div class="flex justify-between">
