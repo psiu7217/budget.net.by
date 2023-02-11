@@ -137,7 +137,7 @@ class User extends Authenticatable
 
         //Start date current month
         $familyUser->start_date_month = date('Y-m-' . $familyUser->first_day);
-        if (date('Y-m-j') < $familyUser->start_date_month) {
+        if (strtotime(date('Y-m-j')) < strtotime($familyUser->start_date_month)) {
             $familyUser->start_date_month = date('Y-m-' . $familyUser->first_day, strtotime(' -1 month'));
         }
 
