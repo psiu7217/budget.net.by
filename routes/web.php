@@ -12,6 +12,7 @@ use App\Http\Controllers\PlanController;
 use App\Http\Controllers\CronController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\StatisticsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/plan/cansel-close-month', [PlanController::class, 'cancelCloseMonth'])->name('plan.cancel_close_month');
 
     Route::resource('transaction', TransactionController::class);
+
+    Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics.index');
 });
 
 
