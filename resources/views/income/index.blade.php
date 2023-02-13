@@ -26,7 +26,7 @@
             @endif
 
             @foreach($purses as $purse)
-                @foreach($purse->incomes as $income)
+                @foreach($purse->incomes->sortByDesc('created_at') as $income)
                         <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                             @include('income.partials.card')
                         </div>

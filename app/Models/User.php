@@ -134,6 +134,9 @@ class User extends Authenticatable
             $familyUser->first_day = $familyUser->family->first_day;
         }
 
+        if ($familyUser->first_day < 10) {
+            $familyUser->first_day = '0'.$familyUser->first_day;
+        }
 
         //Start date current month
         $familyUser->start_date_month = date('Y-m-' . $familyUser->first_day);
