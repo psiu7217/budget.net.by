@@ -71,7 +71,7 @@
                                 var data = google.visualization.arrayToDataTable([
                                     ["Element", "Plans", 'Fact', { role: "style" } ],
                                         @foreach($group->categories as $category)
-                                            ["{{ $category->title }}", {{ $category->plans->first()->cash }}, {{  $category->checks->where('created_at', '>', $user->start_date_month)->sum('cash')|round(0)   }}, "#d1d5db"],
+                                            ["{{ $category->title }}", {{ $category->plans->sortByDesc('created_at')->first()->cash }}, {{  $category->checks->where('created_at', '>', $user->start_date_month)->sum('cash')|round(0)   }}, "#d1d5db"],
                                         @endforeach
                                 ]);
 
