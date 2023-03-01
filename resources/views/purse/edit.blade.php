@@ -87,12 +87,15 @@
                 </div>
             </div>
 
-
-            @foreach($checks as $check)
+            @forelse($checks as $check)
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                     @include('check.partials.card')
                 </div>
-            @endforeach
+            @empty
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <p>No checks</p>
+                </div>
+            @endforelse
 
         </div>
     </div>

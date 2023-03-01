@@ -183,4 +183,18 @@ class CategoryController extends Controller
 
         return Redirect::route('category.index')->with('status', 'Category deleted');
     }
+
+
+    public function getSumChecksAttribute()
+    {
+        $user = User::getAuthUser();
+        return $this->checks->where('created_at', '>', $user->start_date_month)->sum('cash');
+    }
+
+    public function getLatestPlanAmountAttribute()
+    {
+        return $this->plans()->latest('created_at')->value('cash');
+    }
+
+
 }

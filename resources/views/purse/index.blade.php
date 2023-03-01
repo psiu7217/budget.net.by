@@ -32,15 +32,16 @@
                 </div>
             @endif
 
-            @foreach($purses as $purse)
+            @forelse($purses as $purse)
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                     @include('purse.partials.card')
                 </div>
-            @endforeach
+            @empty
+                <div class="p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <p>No purse</p>
+                </div>
+            @endforelse
 
-            @if(!$purses)
-                No purse
-            @endif
         </div>
     </div>
     <script>

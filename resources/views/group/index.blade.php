@@ -42,10 +42,4 @@
             @endif
         </div>
     </div>
-    <script>
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text);
-            return false;
-        }
-    </script>
 </x-app-layout>

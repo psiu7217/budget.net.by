@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\AccessController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -47,6 +48,35 @@ class Purse extends Model
     }
 
 
+    public function scopeAccessibleByUser($query, User $user)
+    {
+        // Get IDs of all users in the same family as the current user
+        $familyUserIds = User::where('family_id', $user->family_id)->pluck('id')->toArray();
+
+        // Retrieve all the purses that belong to the user or a user from the same family
+        $query->where(function($query) use ($user, $familyUserIds) {
+            $query->where('user_id', $user->id)
+                ->orWhere(function($query) use ($familyUserIds) {
+                    $query->whereIn('user_id', $familyUserIds)
+                        ->where('hide', 0);
+                });
+        })->get();
+
+        // Decrypt the encrypted fields
+        $purses = $query->get();
+        foreach ($purses as $purse) {
+            $decryptedFields = ['description', 'number', 'pin'];
+            foreach ($decryptedFields as $field) {
+                if ($purse->{$field}) {
+                    $purse->{$field} = Crypt::decryptString($purse->{$field});
+                }
+            }
+        }
+
+        return $purses;
+    }
+
+
 
     public function addPurse($data)
     {
@@ -72,14 +102,14 @@ class Purse extends Model
 
     public function updatePurse($data, $id)
     {
+        //Purse in family & Purse no hide
+        if (!AccessController::checkPermission(Purse::class, $id)) {
+            return false;
+        }
+
         $purse = Purse::find($id);
         $user = new User;
         $user = $user->getAuthUser();
-
-        //Purse in family & Purse no hide
-        if ((!in_array($purse->user_id, $user->userIds)) || ($purse->hide && $purse->user_id != $user->id)) {
-            return false;
-        }
 
         $purse->fill($data);
         $purse->description = Crypt::encryptString($data['description']);

@@ -6,12 +6,21 @@ use App\Models\Purse;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
 
 class PurseController extends Controller
 {
+
+
+    public function __construct()
+    {
+
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -19,18 +28,8 @@ class PurseController extends Controller
      */
     public function index()
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-
-        foreach ($user->purses as $purse) {
-            $purse->description = Crypt::decryptString($purse->description);
-            $purse->number = Crypt::decryptString($purse->number);
-            $purse->pin = Crypt::decryptString($purse->pin);
-        }
-
-
         return view('purse.index', [
-            'purses' => $user->purses,
+            'purses' => Purse::accessibleByUser(auth()->user()),
         ]);
     }
 
@@ -41,14 +40,7 @@ class PurseController extends Controller
      */
     public function create()
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-
-        return view('purse.create', [
-            'family' => $user->family,
-            'user' => $user,
-            'purses' => $user->purses,
-        ]);
+        return view('purse.create');
     }
 
     /**
@@ -59,6 +51,7 @@ class PurseController extends Controller
      */
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'title' => 'required|max:255|min:2',
             'sort' => '',
@@ -69,11 +62,18 @@ class PurseController extends Controller
             'currency' => '',
         ]);
 
-        $purse = new Purse();
-        $purse->addPurse($validated);
+        Purse::create([
+            'title' => $validated['title'],
+            'sort' => $validated['sort'] ?? 1,
+            'hide' => isset($validated['hide']),
+            'description' => Crypt::encryptString($validated['description'] ?? ''),
+            'number' => Crypt::encryptString($validated['number'] ?? ''),
+            'pin' => Crypt::encryptString($validated['pin'] ?? ''),
+            'user_id' => Auth::id(),
+            'currency' => $validated['currency'] ?? '',
+        ]);
 
-
-        return Redirect::route('purse.create')->with('status', 'purse-added');
+        return redirect()->route('purse.create')->with('status', 'purse-added');
     }
 
     /**
@@ -95,24 +95,27 @@ class PurseController extends Controller
      */
     public function edit($id)
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-
-        $purse = Purse::find($id);
-
-        if ((!in_array($purse->user_id, $user->userIds)) || ($purse->hide && $purse->user_id != $user->id)) {
-            return Redirect::route('purse.index')->with('error', 'Access denied');
+        if (!AccessController::checkPermission(Purse::class, $id)) {
+            return redirect()->route('purse.index')->with('error', 'Access denied');
         }
 
-        $purse->description = Crypt::decryptString($purse->description);
-        $purse->number = Crypt::decryptString($purse->number);
-        $purse->pin = Crypt::decryptString($purse->pin);
+        $purse = Purse::with(['checks' => function ($query) {
+            $query->orderByDesc('created_at');
+        }])->findOrFail($id);
+
+        $decryptedFields = ['description', 'number', 'pin'];
+        foreach ($decryptedFields as $field) {
+            if ($purse->{$field}) {
+                $purse->{$field} = Crypt::decryptString($purse->{$field});
+            }
+        }
 
         return view('purse.edit', [
             'purse' => $purse,
-            'checks' => $purse->checks->sortByDesc('created_at'),
+            'checks' => $purse->checks,
         ]);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -123,6 +126,11 @@ class PurseController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        if (!AccessController::checkPermission(Purse::class, $id)) {
+            return redirect()->route('purse.index')->with('error', 'Access denied');
+        }
+
         $validated = $request->validate([
             'title' => 'required|max:255|min:2',
             'sort' => '',
@@ -134,15 +142,16 @@ class PurseController extends Controller
             'cash' => '',
         ]);
 
-        $purse = new Purse();
-        $purse = $purse->updatePurse($validated, $id);
+        $purse = Purse::find($id);
+        $purse->fill($validated);
+        $purse->description = Crypt::encryptString($validated['description'] ?? '');
+        $purse->number = Crypt::encryptString($validated['number'] ?? '');
+        $purse->pin = Crypt::encryptString($validated['pin'] ?? '');
+        $purse->sort = $validated['sort'] ?? 1;
+        $purse->hide = isset($validated['hide']) && $validated['hide'] == 'on' ? 1 : 0;
+        $purse->save();
 
-        if ($purse) {
-            return Redirect::route('purse.index')->with('status', 'Purse ' . $purse->title . ' Updated');
-        } else {
-            return Redirect::route('purse.index')->with('error', 'Access denied');
-        }
-
+        return Redirect::route('purse.index')->with('status', 'Purse ' . $purse->title . ' Updated');
     }
 
     /**
@@ -153,27 +162,14 @@ class PurseController extends Controller
      */
     public function destroy($id)
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-
-        $purse = Purse::find($id);
-
-        if ((!in_array($purse->user_id, $user->userIds)) || ($purse->hide && $purse->user_id != $user->id)) {
-            return Redirect::route('purse.index')->with('error', 'Access denied');
+        if (!AccessController::checkPermission(Purse::class, $id)) {
+            return redirect()->route('purse.index')->with('error', 'Access denied');
         }
 
-
-        foreach ($purse->fromTransactions as $transaction) {
-            $transaction->delete();
-        }
-
-        foreach ($purse->toTransactions as $transaction) {
-            $transaction->delete();
-        }
-
-
+        $purse = Purse::findOrFail($id);
         $purse->delete();
-        return Redirect::route('purse.index')->with('status', 'Purse Delete');
+
+        return redirect()->route('purse.index')->with('status', 'Purse Deleted');
 
     }
 }

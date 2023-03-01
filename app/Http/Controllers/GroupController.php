@@ -17,11 +17,8 @@ class GroupController extends Controller
      */
     public function index()
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-
         return view('group.index', [
-            'groups' => $user->groups,
+            'groups' => Group::getGroupsForAuthorizedUser(),
         ]);
     }
 
@@ -45,20 +42,16 @@ class GroupController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|max:255|min:2',
-            'sort' => '',
+            'sort' => 'nullable|numeric',
         ]);
 
-        if (!isset($validated['sort'])){
-            $validated['sort'] = 1;
-        }
+        $group = Group::create([
+            'title' => $validated['title'],
+            'sort' => $validated['sort'] ?? 1,
+            'user_id' => Auth::id(),
+        ]);
 
-        $validated['user_id'] = Auth::id();
-
-        $group = new Group();
-        $group->fill($validated);
-        $group->save();
-
-        return Redirect::route('group.index')->with('status', 'Group Added');
+        return redirect()->route('group.index')->with('status', 'Group Added');
     }
 
     /**
@@ -80,14 +73,11 @@ class GroupController extends Controller
      */
     public function edit($id)
     {
-        $group = Group::find($id);
-
-        $user = new User;
-        $user = $user->getAuthUser();
-
-        if (!in_array($group->user_id, $user->userIds)) {
+        if (!AccessController::checkPermission(Group::class, $id)) {
             return Redirect::route('group.index')->with('error', 'Access denied');
         }
+
+        $group = Group::find($id);
 
         return view('group.edit', [
             'group' => $group,
@@ -103,28 +93,25 @@ class GroupController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!AccessController::checkPermission(Group::class, $id)) {
+            return Redirect::route('group.index')->with('error', 'Access denied');
+        }
+
         $validated = $request->validate([
             'title' => 'required|max:255|min:2',
             'sort' => '',
         ]);
-        if (!isset($validated['sort'])){
-            $validated['sort'] = 1;
-        }
+
+        $validated['sort'] = !empty($validated['sort']) ? $validated['sort'] : 1;
 
         $group = Group::find($id);
-
-        $user = new User;
-        $user = $user->getAuthUser();
-
-        if (!in_array($group->user_id, $user->userIds)) {
-            return Redirect::route('group.index')->with('error', 'Access denied');
-        }
 
         $group->fill($validated);
         $group->save();
 
         return Redirect::route('group.index')->with('status', 'Group update');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -134,15 +121,13 @@ class GroupController extends Controller
      */
     public function destroy($id)
     {
-        $group = Group::find($id);
-        $user = new User;
-        $user = $user->getAuthUser();
+        $group = Group::with('categories')->find($id);
 
-        if (!in_array($group->user_id, $user->userIds)) {
+        if (!AccessController::checkPermission(Group::class, $id)) {
             return Redirect::route('group.index')->with('error', 'Access denied');
         }
 
-        if (count($group->categories)){
+        if ($group->categories->isNotEmpty()){
             return Redirect::route('group.index')->with('error', 'Please remove all categories from this group and try again');
         }
 
@@ -150,4 +135,5 @@ class GroupController extends Controller
 
         return Redirect::route('group.index')->with('status', 'Group deleted');
     }
+
 }
