@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Group;
+use App\Models\Income;
 use App\Models\Purse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -79,5 +80,22 @@ class AccessController extends Controller
 
         return false;
     }
+
+
+    static public function checkIncomeAccess($incomeId)
+    {
+        $user = Auth::user();
+
+        $income = Income::with('purse.user')->find($incomeId);
+
+        if (!$income) return false;
+
+        if($user->id === $income->purse->user_id || ($user->family_id === $income->purse->user->family_id && $income->purse->hide === 0)) {
+            return true;
+        }
+
+        return false;
+    }
+
 
 }

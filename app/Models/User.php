@@ -86,6 +86,14 @@ class User extends Authenticatable
         return $this->hasManyThrough(Check::class, Purse::class);
     }
 
+    public function getFamilyUserIdsAttribute()
+    {
+        if ($this->family) {
+            return $this->family->users()->pluck('id')->toArray();
+        }
+
+        return [];
+    }
 
     /**
      * Custom functions

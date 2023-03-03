@@ -6,6 +6,7 @@ use App\Models\Purse;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
 class TransactionController extends Controller
@@ -17,12 +18,8 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-
-
         return view('transaction.index', [
-            'transactions' => $user->transactions->sortByDesc('created_at'),
+            'transactions' => Transaction::getAllTransactionsForAuthUser(),
         ]);
     }
 
@@ -33,12 +30,8 @@ class TransactionController extends Controller
      */
     public function create()
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-
         return view('transaction.create', [
-            'groups' => $user->groups,
-            'purses' => $user->purses,
+            'purses' => Purse::accessibleByUser(),
         ]);
     }
 
@@ -57,22 +50,24 @@ class TransactionController extends Controller
         ]);
 
 
-        if ($validated['from_purse_id'] == $validated['to_purse_id']) {
-            return Redirect::route('transaction.index')->with('error', 'Identical purses');
+        if ($validated['from_purse_id'] === $validated['to_purse_id']) {
+            return redirect()->route('transaction.index')->with('error', 'Identical purses');
         }
 
 
-        $transaction = new Transaction();
-        $transaction->fill($validated);
-        $transaction->save();
+        $transaction = new Transaction($validated);
 
+        DB::transaction(function () use ($transaction) {
+            $transaction->save();
 
-        //Edit purses cash
-        $purse = new Purse();
-        $purse->updateCash($transaction->from_purse_id, $transaction->rate, false);
-        $purse->updateCash($transaction->to_purse_id, $transaction->rate, true);
+            $fromPurse = Purse::findOrFail($transaction->from_purse_id);
+            $fromPurse->updateCash($transaction->from_purse_id, $transaction->rate, false);
 
-        return Redirect::route('transaction.index')->with('status', 'Transaction Added');
+            $toPurse = Purse::findOrFail($transaction->to_purse_id);
+            $toPurse->updateCash($transaction->to_purse_id, $transaction->rate, true);
+        });
+
+        return redirect()->route('transaction.create')->with('status', 'Transaction Added');
     }
 
     /**

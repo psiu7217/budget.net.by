@@ -48,8 +48,9 @@ class Purse extends Model
     }
 
 
-    public function scopeAccessibleByUser($query, User $user)
+    public function scopeAccessibleByUser($query)
     {
+        $user = auth()->user();
         // Get IDs of all users in the same family as the current user
         $familyUserIds = User::where('family_id', $user->family_id)->pluck('id')->toArray();
 
@@ -60,7 +61,9 @@ class Purse extends Model
                     $query->whereIn('user_id', $familyUserIds)
                         ->where('hide', 0);
                 });
-        })->get();
+        })
+            ->orderBy('title')
+            ->get();
 
         // Decrypt the encrypted fields
         $purses = $query->get();
@@ -154,4 +157,58 @@ class Purse extends Model
     public function balance() {
         return $this->incomes->sum('cash') - $this->checks->sum('cash');
     }
+
+
+    /**
+     * Withdraw a certain amount from the purse
+     *
+     * @param float $amount
+     * @return bool
+     */
+    public function withdraw(float $amount): bool
+    {
+        $purse = $this;
+
+        if (!$purse) {
+            return false;
+        }
+
+        $currentBalance = $purse->cash;
+
+        if ($amount > $currentBalance) {
+            return false;
+        }
+
+        $newBalance = $currentBalance - $amount;
+        $purse->cash = $newBalance;
+
+        return $purse->save();
+    }
+
+    /**
+     * Deposit a certain amount to the purse
+     *
+     * @param float $amount
+     * @return bool
+     */
+    public function deposit(float $amount): bool
+    {
+        $purse = $this;
+
+        if (!$purse) {
+            return false;
+        }
+
+        $currentBalance = $purse->cash;
+
+        $newBalance = $currentBalance + $amount;
+        $purse->cash = $newBalance;
+
+        return $purse->save();
+    }
+
+
+
+
+
 }

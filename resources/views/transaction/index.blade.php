@@ -15,34 +15,35 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            @if(session()->get('error'))
+            @if (session('status'))
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                    <h3><x-input-error class="mt-2 text-m" :messages="session()->get('error')" /></h3>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">{{ session('status') }}</h3>
                 </div>
             @endif
 
-            @if(session()->get('status'))
+            @if (session('error'))
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">{{session()->get('status')}}</h3>
+                    <h3>
+                        <x-input-error class="mt-2 text-m" :messages="session('error')" />
+                    </h3>
                 </div>
             @endif
 
-            @foreach($transactions as $transaction)
+            @forelse($transactions as $transaction)
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                     @include('transaction.partials.card')
                 </div>
-            @endforeach
+            @empty
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <h3 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                        {{ __('No Transactions') }}
+                        <a href="{{ route('transaction.create') }}" class="border-b">
+                            {{ __('Add First Transaction') }}
+                        </a>
+                    </h3>
+                </div>
+            @endforelse
 
-            @if(!count($transactions))
-                    <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                        <h3 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                            {{ __('No Transactions') }}
-                            <a href="{{ route('transaction.create') }}" class="border-b">
-                                {{ __('Add First Transaction') }}
-                            </a>
-                        </h3>
-                    </div>
-            @endif
         </div>
     </div>
 

@@ -12,7 +12,6 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-
             @if(session()->get('error'))
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                     <h3><x-input-error class="mt-2 text-m" :messages="session()->get('error')" /></h3>
@@ -25,23 +24,14 @@
                 </div>
             @endif
 
-            @foreach($purses as $purse)
-                @foreach($purse->incomes->sortByDesc('created_at') as $income)
-                        <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                            @include('income.partials.card')
-                        </div>
-                @endforeach
-            @endforeach
 
-            @if(!$purses)
-                No purse
-            @endif
+            @forelse($incomes as $income)
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    @include('income.partials.card')
+                </div>
+            @empty
+                No incomes
+            @endforelse
         </div>
     </div>
-    <script>
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text);
-            return false;
-        }
-    </script>
 </x-app-layout>

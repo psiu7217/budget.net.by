@@ -17,15 +17,8 @@ class IncomeController extends Controller
      */
     public function index()
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-
-
-
         return view('income.index', [
-            'family' => $user->family,
-            'user' => $user,
-            'purses' => $user->purses,
+            'incomes' => Income::getIncomes(),
         ]);
     }
 
@@ -38,13 +31,8 @@ class IncomeController extends Controller
      */
     public function create()
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-
         return view('income.create', [
-            'family' => $user->family,
-            'user' => $user,
-            'purses' => $user->purses,
+            'purses' => Purse::accessibleByUser(),
         ]);
     }
 
@@ -62,15 +50,14 @@ class IncomeController extends Controller
             'cash' => 'required',
         ]);
 
-        $income = new Income();
-        $income->fill($validated);
+        $income = new Income($validated);
         $income->save();
 
-        //Add Purse cash
-        $purse = new Purse;
-        $purse->updateCash($validated['purse_id'], $validated['cash']);
+        // Update Purse cash
+        $purse = Purse::find($validated['purse_id']);
+        $purse->increment('cash', $validated['cash']);
 
-        return Redirect::route('income.index')->with('status', 'Income Added');
+        return redirect()->route('income.index')->with('status', 'Income Added');
     }
 
     /**
@@ -93,17 +80,15 @@ class IncomeController extends Controller
      */
     public function edit($id)
     {
-        $user = new User;
-        $user = $user->getAuthUser();
         $income = Income::find($id);
 
-        if ((!in_array($income->purse->user_id, $user->userIds)) || ($income->purse->hide && $income->purse->user_id != $user->id)) {
-            return Redirect::route('income.index')->with('error', 'Access denied');
+        if (!AccessController::checkIncomeAccess($id)) {
+            return redirect()->route('income.index')->with('error', 'Access denied');
         }
 
 
         return view('income.edit', [
-            'purses' => $user->purses,
+            'purses' => Purse::accessibleByUser(),
             'income'    => $income,
         ]);
     }
@@ -128,20 +113,32 @@ class IncomeController extends Controller
         $user = $user->getAuthUser();
         $income = Income::find($id);
 
-        if ((!in_array($income->purse->user_id, $user->userIds)) || ($income->purse->hide && $income->purse->user_id != $user->id)) {
-            return Redirect::route('income.index')->with('error', 'Access denied');
+        if (!AccessController::checkIncomeAccess($id)) {
+            return redirect()->route('income.index')->with('error', 'Access denied');
         }
 
-        //Edit purses cash
-        $purse = new Purse;
-        $purse->updateCash($income->purse_id, $validated['cash'] - $income->cash);
+        // Check if purse_id has changed
+        if ($income->purse_id != $validated['purse_id']) {
+            // Transfer funds between purses
+            $old_purse = Purse::find($income->purse_id);
+            $new_purse = Purse::find($validated['purse_id']);
+            $old_purse->withdraw($income->cash);
+            $new_purse->deposit($validated['cash']);
+        } else {
+            $cashDiff = $validated['cash'] - $income->cash;
+
+            // Edit purses cash
+            $purse = Purse::find($income->purse_id);
+            $purse->cash += $cashDiff;
+            $purse->save();
+        }
 
         $income->fill($validated);
         $income->save();
         return Redirect::route('income.index')->with('status', 'Income updated');
-
-
     }
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -151,35 +148,18 @@ class IncomeController extends Controller
      */
     public function destroy($id)
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-        $income = Income::find($id);
+        $income = Income::findOrFail($id);
 
-        if ((!in_array($income->purse->user_id, $user->userIds)) || ($income->purse->hide && $income->purse->user_id != $user->id)) {
-            return Redirect::route('income.index')->with('error', 'Access denied');
+        if (!AccessController::checkIncomeAccess($id)) {
+            return redirect()->route('income.index')->with('error', 'Access denied');
         }
 
         //Minus cash Purse
-        $purse = new Purse;
-        $purse->updateCash($income->purse_id, $income->cash, false);
+        $income->purse->update(['cash' => $income->purse->cash - $income->cash]);
 
         $income->delete();
-        return Redirect::route('income.index')->with('status', 'Income Deleted');
 
-    }
-
-
-    public function accessVerification ($id)
-    {
-        $user = new User;
-        $user = $user->getAuthUser();
-        $income = Income::find($id);
-
-        if ((!in_array($income->purse->user_id, $user->userIds)) || ($income->purse->hide && $income->purse->user_id != $user->id)) {
-            return Redirect::route('income.index')->with('error', 'Access denied');
-        }
-
-        return [$income, $user];
+        return redirect()->route('income.index')->with('status', 'Income Deleted');
     }
 
 }

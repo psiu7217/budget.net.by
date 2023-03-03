@@ -29,7 +29,7 @@ class PurseController extends Controller
     public function index()
     {
         return view('purse.index', [
-            'purses' => Purse::accessibleByUser(auth()->user()),
+            'purses' => Purse::accessibleByUser(),
         ]);
     }
 

@@ -5,10 +5,10 @@
                 <div class="mt-1 text-sm text-gray-600 dark:text-gray-400 mr-2">{{  $income->purse->user->name  }} - </div>
                 {{  $income->title  }}
             </div>
-            <span>{{ $income->cash }} {{$purse->currency}}</span>
+            <span>{{ $income->cash }} {{ $income->currency }}</span>
         </h2>
         <div class="flex justify-between">
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{  $purse->title  }}</p>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{  $income->purse_title  }}</p>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{  $income->created_at  }}</p>
         </div>
     </header>
