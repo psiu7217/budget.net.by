@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -94,6 +95,18 @@ class User extends Authenticatable
 
         return [];
     }
+
+
+    public function getFamilyUserIds()
+    {
+        $family = $this->family;
+
+        $familyUserIds = $family->users->pluck('id')->toArray();
+
+        return $familyUserIds;
+    }
+
+
 
     /**
      * Custom functions
@@ -254,6 +267,21 @@ class User extends Authenticatable
     }
 
 
+
+    static public function getFamilyStartDate()
+    {
+        $user = Auth::user();
+        $dayOfMonth = $user->family->first_day ?? $user->first_day;
+
+        $now = Carbon::now();
+        $date = Carbon::create($now->year, $now->month, $dayOfMonth, 0, 0, 0);
+
+        if ($date->isFuture()) {
+            $date->subMonthNoOverflow();
+        }
+
+        return $date;
+    }
 
 }
 

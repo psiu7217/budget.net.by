@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Check;
 use App\Models\Group;
 use App\Models\Plan;
+use App\Models\Purse;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,13 +21,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-
-
         return view('category.index', [
-            'groups' => $user->groups,
-            'user' => $user,
+            'sumPurse' => Purse::getTotalPurseCashForFamily(),
+            'groups' => Category::getGroupsForAuthorizedUser(),
+            'sumPlans' => Plan::getSumLastPlansForAuthorizedUser(),
         ]);
     }
 
@@ -36,13 +35,9 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-        $category = new Category();
-
         return view('category.create', [
-            'groups' => $user->groups,
-            'statuses' => $category->categoryStatuses(),
+            'groups' => Group::getGroupsForAuthorizedUser(),
+            'statuses' => Category::categoryStatuses(),
         ]);
     }
 
@@ -59,25 +54,21 @@ class CategoryController extends Controller
             'sort' => 'required',
             'group_id' => 'required',
             'status' => 'required',
+            'hide' => 'sometimes|nullable|boolean',
         ]);
 
-        if ($request->get('hide') && $request->get('hide') == 'on') {
-            $validated['hide'] = 1;
-        }else {
-            $validated['hide'] = 0;
-        }
+        $validated['hide'] = $request->has('hide');
 
-        $category = new Category();
-        $category->fill($validated);
-        $category->save();
+        $category = Category::create($validated);
 
-        $plan = new Plan();
-        $plan->category_id = $category->id;
-        $plan->cash = 0;
-        $plan->save();
+        Plan::create([
+            'category_id' => $category->id,
+            'cash' => 0,
+        ]);
 
-        return Redirect::route('category.index')->with('status', 'Category Added');
+        return redirect()->route('category.index')->with('status', 'Category Added');
     }
+
 
     /**
      * Display the specified resource.
@@ -98,24 +89,19 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        $user = new User;
-        $user = $user->getAuthUser();
         $category = Category::find($id);
 
-        if (!$category) {
+        if (!AccessController::checkPermission(Group::class, $category->group_id)) {
             return Redirect::route('category.index')->with('error', 'Access denied');
         }
 
-        if (!in_array($category->group->user_id, $user->userIds)) {
-            return Redirect::route('category.index')->with('error', 'Access denied');
-        }
 
         return view('category.edit', [
-            'groups' => $user->groups,
-            'user' => $user,
             'category' => $category,
-            'statuses' => $category->categoryStatuses(),
-            'plans' => $category->plans->sortByDesc('created_at'),
+            'checks' => Check::getAllChecksForCategory($id),
+            'groups' => Group::getGroupsForAuthorizedUser(),
+            'statuses' => Category::categoryStatuses(),
+            'plans' => Plan::getPlansByCategory($id),
         ]);
     }
 
@@ -128,6 +114,11 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $category = Category::find($id);
+        if (!AccessController::checkPermission(Group::class, $category->group_id)) {
+            return Redirect::route('category.index')->with('error', 'Access denied');
+        }
+
         $validated = $request->validate([
             'title' => 'required|max:255|min:2',
             'sort' => 'required',
@@ -135,26 +126,11 @@ class CategoryController extends Controller
             'status' => 'required',
         ]);
 
-        if ($request->get('hide') && $request->get('hide') == 'on') {
-            $validated['hide'] = 1;
-        }else {
-            $validated['hide'] = 0;
-        }
+        $validated['hide'] = $request->filled('hide') ? 1 : 0;
 
-        $category = Category::find($id);
-        $user = new User;
-        $user = $user->getAuthUser();
-
-        if (!in_array($category->group->user_id, $user->userIds)) {
-            return Redirect::route('category.index')->with('error', 'Access denied');
-        }
-
-        $category->fill($validated);
-        $category->save();
+        $category->update($validated);
 
         return Redirect::route('category.index')->with('status', 'Category Updated');
-
-
     }
 
     /**
@@ -166,20 +142,14 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::find($id);
-
-        if (!$category) {
+        if (!AccessController::checkPermission(Group::class, $category->group_id)) {
             return Redirect::route('category.index')->with('error', 'Access denied');
         }
 
-        $user = new User;
-        $user = $user->getAuthUser();
-        if (!in_array($category->group->user_id, $user->userIds)) {
-            return Redirect::route('category.index')->with('error', 'Access denied');
-        }
+        Plan::whereIn('category_id', [$category->id])->delete();
+        Check::whereIn('category_id', [$category->id])->delete();
 
-        Plan::where('category_id' ,$category->id)->delete();
-
-        $category->delete();
+        $category->destroy($id);
 
         return Redirect::route('category.index')->with('status', 'Category deleted');
     }

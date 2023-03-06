@@ -37,7 +37,7 @@
                         {{ __('Total purses') }}
                     </div>
                     <div>
-                        {{ $user->purses->sum('cash') }} BYN
+                        {{ $sumPurse }} BYN
                     </div>
                 </h3>
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">
@@ -45,30 +45,27 @@
                         {{ __('Total plans') }}
                     </div>
                     <div>
-                        {{ $user->sumTotalPlans }} BYN
+                        {{ $sumPlans }} BYN
                     </div>
                 </h3>
             </div>
 
-            @foreach($groups as $group)
+            @forelse($groups as $group)
                     <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                         <h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">
-                            <div>{{ $group->title }}</div>
-                            <div>{{ $group->sumPlans }} BYN</div>
+                            <div>{{ $group['groupTitle'] }}</div>
+                            <div>{{ $group['groupCash'] }} BYN</div>
                         </h3>
-                        @if(!count($group->categories))
-                            <p class="text-gray-900 dark:text-gray-100">No category</p>
-                        @endif
 
-                        @foreach($group->categories->sortByDesc('sort') as $category)
+                        @forelse($group['items'] as $category)
                             @include('category.partials.card')
-                        @endforeach
+                        @empty
+                                <p class="text-gray-900 dark:text-gray-100">No category</p>
+                        @endforelse
                     </div>
-            @endforeach
-
-            @if(!$groups)
+            @empty
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 flex justify-between">{{ __('No Groups') }}</h3>
-            @endif
+            @endforelse
         </div>
     </div>
 

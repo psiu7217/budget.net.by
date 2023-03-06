@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Check;
+use App\Models\Group;
 use App\Models\Purse;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -18,11 +19,9 @@ class CheckController extends Controller
      */
     public function index()
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-
+        $checks = Check::getAllChecksForUserAndFamily();
         return view('check.index', [
-            'checks' => $user->checks->sortByDesc('created_at'),
+            'checks' => $checks,
         ]);
     }
 
@@ -33,12 +32,9 @@ class CheckController extends Controller
      */
     public function create()
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-
         return view('check.create', [
-            'groups' => $user->groups,
-            'purses' => $user->purses,
+            'groups' => Group::getGroupsForAuthorizedUser(),
+            'purses' => Purse::accessibleByUser(),
         ]);
     }
 
@@ -58,13 +54,9 @@ class CheckController extends Controller
         ]);
 
 
-        $check = new Check();
-        $check->fill($validated);
-        $check->save();
+        $check = Check::create($validated);
+        $check->purse->withdraw($check->cash);
 
-        //Minus purse cash
-        $purse = new Purse;
-        $purse->updateCash($check->purse_id, $check->cash, false);
 
         return Redirect::route('check.create')->with('status', 'Check Added');
     }
@@ -88,20 +80,15 @@ class CheckController extends Controller
      */
     public function edit($id)
     {
-        $user = new User;
-        $user = $user->getAuthUser();
-        $check = Check::find($id);
+        $check = Check::findOrFail($id);
 
-        if (!$check) {
-            return Redirect::route('check.index')->with('error', 'Access denied');
-        }
-        if (!$check->accessVerification()) {
-            return Redirect::route('check.index')->with('error', 'Access denied');
+        if (!AccessController::checkPermission(Purse::class, $check->purse_id)) {
+            return redirect()->route('purse.index')->with('error', 'Access denied');
         }
 
         return view('check.edit', [
-            'groups' => $user->groups,
-            'purses' => $user->purses,
+            'groups' => Group::getGroupsForAuthorizedUser(),
+            'purses' => Purse::accessibleByUser(),
             'check' => $check,
         ]);
     }
@@ -115,6 +102,12 @@ class CheckController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $check = Check::findOrFail($id);
+
+        if (!AccessController::checkPermission(Purse::class, $check->purse_id)) {
+            return redirect()->route('purse.index')->with('error', 'Access denied');
+        }
+
         $validated = $request->validate([
             'title' => 'required|max:255|min:2',
             'category_id' => 'required',
@@ -123,21 +116,10 @@ class CheckController extends Controller
         ]);
 
 
-        $check = Check::find($id);
-
-        if (!$check) {
-            return Redirect::route('check.index')->with('error', 'Access denied');
-        }
-        if (!$check->accessVerification()) {
-            return Redirect::route('check.index')->with('error', 'Access denied');
-        }
-
         //Edit purses cash
-        $purse = new Purse;
-        $purse->updateCash($check->purse_id, $check->cash - $validated['cash']);
+        $check->purse->updateCash($check->purse_id, $check->cash - $validated['cash']);
 
-        $check->fill($validated);
-        $check->save();
+        $check->update($validated);
 
         return Redirect::route('check.index')->with('status', 'Check Update');
     }
@@ -150,18 +132,13 @@ class CheckController extends Controller
      */
     public function destroy($id)
     {
-        $check = Check::find($id);
+        $check = Check::findOrFail($id);
 
-        if (!$check) {
-            return Redirect::route('check.index')->with('error', 'Access denied');
-        }
-        if (!$check->accessVerification()) {
-            return Redirect::route('check.index')->with('error', 'Access denied');
+        if (!AccessController::checkPermission(Purse::class, $check->purse_id)) {
+            return redirect()->route('purse.index')->with('error', 'Access denied');
         }
 
-        //Plus purse cash
-        $purse = new Purse;
-        $purse->updateCash($check->purse_id, $check->cash);
+        $check->purse->deposit($check->cash);
 
         $check->delete();
 

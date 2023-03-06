@@ -208,6 +208,20 @@ class Purse extends Model
     }
 
 
+    static public function getTotalPurseCashForFamily() {
+        $user = Auth::user();
+        $familyUserIds = User::where('family_id', $user->family_id)->pluck('id')->toArray();
+
+
+        return Purse::where(function($query) use ($user, $familyUserIds) {
+            $query->Where(function($query) use ($familyUserIds) {
+                    $query->whereIn('user_id', $familyUserIds)
+                        ->where('hide', 0);
+                });
+        })
+            ->orderBy('title')
+            ->sum('cash');
+    }
 
 
 

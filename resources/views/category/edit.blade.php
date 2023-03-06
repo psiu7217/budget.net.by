@@ -79,7 +79,7 @@
                 <div class="p-2 text-gray-900 dark:text-gray-100 text-xl font-semibold">
                     {{ __('Checks in this month') }}
                 </div>
-                @foreach($category->checks->where('created_at', '>', $user->start_date_month) as $check)
+                @foreach($checks as $check)
                     @include('check.partials.card')
                @endforeach
             </div>
