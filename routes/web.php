@@ -13,6 +13,7 @@ use App\Http\Controllers\CronController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\GoalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('group', GroupController::class);
     Route::resource('category', CategoryController::class);
     Route::resource('check', CheckController::class);
+    Route::resource('goal', GoalController::class);
+    Route::post('/goal/add-amount', [GoalController::class, 'addAmount'])->name('goal.add_amount');
 
     Route::resource('plan', PlanController::class);
     Route::post('/plan/close-month', [PlanController::class, 'closeMonth'])->name('plan.close_month');
