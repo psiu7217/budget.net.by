@@ -99,6 +99,7 @@ class Category extends Model
             $groupTitle = $category->group->title;
             $categoryId = $category->id;
             $categoryTitle = $category->title;
+            $sortCategory = $category->sort;
             $planCash = $category->plans->last() ? $category->plans->last()->cash : null;
             $checkCash = $category->checks->sum('cash');
 
@@ -116,7 +117,12 @@ class Category extends Model
                 'categoryId' => $categoryId,
                 'planCash' => $planCash,
                 'checkCash' => $checkCash,
+                'sort' => $sortCategory,
             ];
+
+            usort($result[$groupId]['items'], function($a, $b) {
+                return $b['sort'] - $a['sort'];
+            });
 
             $result[$groupId]['groupCash'] += $planCash;
             $result[$groupId]['groupCheckCash'] += $checkCash;
