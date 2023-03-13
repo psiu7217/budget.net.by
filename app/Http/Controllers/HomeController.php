@@ -19,18 +19,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-
         $sumTotalChecks = Check::getSumTotalChecks();
         $sumTotalPlans = Plan::getSumLastPlansForAuthorizedUser();
         $sumIncomeCurrentMonth = Income::getSumIncomeCurrentMonth();
 
-
-
         return view('dashboard', [
             'checks' => Check::getAllChecksForUserAndFamily()->splice(0, 3),
-            'purses' => Purse::AccessibleByUser(),
+            'purses' => Purse::getVisiblePursesOnlyTitleCash(),
             'groups' => Category::getGroupsForAuthorizedUser(),
-//            'categories' => Category::getCategoriesForAuthorizedUser(),
             'sumTotalChecks' => $sumTotalChecks,
             'sumTotalPlans' => $sumTotalPlans,
             'sumIncomeCurrentMonth' => $sumIncomeCurrentMonth,

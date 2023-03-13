@@ -80,6 +80,19 @@ class Purse extends Model
     }
 
 
+    static public function getVisiblePursesOnlyTitleCash()
+    {
+        $user = auth()->user();
+        // Get IDs of all users in the same family as the current user
+        $familyUserIds = User::where('family_id', $user->family_id)->pluck('id')->toArray();
+
+        return Purse::whereIn('user_id', $familyUserIds)
+            ->with('user')
+            ->where('hide', 0)
+            ->orderByDesc('sort')
+            ->get();
+    }
+
 
     public function addPurse($data)
     {
