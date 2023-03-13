@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class Income extends Model
@@ -60,5 +60,13 @@ class Income extends Model
         })
             ->get();
         return $incomes;
+    }
+
+    static public function getSumIncomeCurrentMonth()
+    {
+        $date = User::getFamilyStartDate();
+        return Income::where('created_at', '>', $date)
+            ->orderByDesc('created_at')
+            ->sum('cash');
     }
 }

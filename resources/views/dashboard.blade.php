@@ -36,7 +36,7 @@
                     {{ __('Purses') }}
                 </div>
                 <div class="p-6 text-lg font-medium text-gray-900 dark:text-gray-100 flex">
-                    {{ $purses->sum('cash') }} BYN
+                    {{ $purses->sum('cash') }} / {{ $sumIncomeCurrentMonth }} BYN
                 </div>
             </div>
             @foreach($purses as $purse)

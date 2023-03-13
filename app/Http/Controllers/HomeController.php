@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Check;
 use App\Models\Group;
+use App\Models\Income;
 use App\Models\Plan;
 use App\Models\Purse;
 use App\Models\User;
@@ -21,6 +22,8 @@ class HomeController extends Controller
 
         $sumTotalChecks = Check::getSumTotalChecks();
         $sumTotalPlans = Plan::getSumLastPlansForAuthorizedUser();
+        $sumIncomeCurrentMonth = Income::getSumIncomeCurrentMonth();
+
 
 
         return view('dashboard', [
@@ -30,6 +33,7 @@ class HomeController extends Controller
 //            'categories' => Category::getCategoriesForAuthorizedUser(),
             'sumTotalChecks' => $sumTotalChecks,
             'sumTotalPlans' => $sumTotalPlans,
+            'sumIncomeCurrentMonth' => $sumIncomeCurrentMonth,
         ]);
     }
 }
