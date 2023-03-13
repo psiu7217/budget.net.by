@@ -62,7 +62,7 @@ class Purse extends Model
                         ->where('hide', 0);
                 });
         })
-            ->orderBy('title')
+            ->orderByDesc('sort')
             ->get();
 
         // Decrypt the encrypted fields

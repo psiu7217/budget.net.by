@@ -27,7 +27,7 @@ class HomeController extends Controller
             'checks' => Check::getAllChecksForUserAndFamily()->splice(0, 3),
             'purses' => Purse::AccessibleByUser(),
             'groups' => Category::getGroupsForAuthorizedUser(),
-            'categories' => Category::getCategoriesForAuthorizedUser(),
+//            'categories' => Category::getCategoriesForAuthorizedUser(),
             'sumTotalChecks' => $sumTotalChecks,
             'sumTotalPlans' => $sumTotalPlans,
         ]);

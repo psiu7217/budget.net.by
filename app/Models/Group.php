@@ -47,7 +47,7 @@ class Group extends Model
             foreach ($family->users as $familyUser) {
                 $groupIds = array_merge($groupIds, $familyUser->groups()->pluck('id')->toArray());
             }
-            $groups = self::whereIn('id', array_unique($groupIds))->get();
+            $groups = self::whereIn('id', array_unique($groupIds))->orderByDesc('sort')->get();
         } else {
             // User does not belong to a family, get user's groups
             $groups = $user->groups;

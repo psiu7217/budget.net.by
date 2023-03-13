@@ -95,6 +95,7 @@ class Category extends Model
         $result = [];
         foreach ($categories as $category) {
             $groupId = $category->group->id;
+            $sortGroup = $category->group->sort;
             $groupTitle = $category->group->title;
             $categoryId = $category->id;
             $categoryTitle = $category->title;
@@ -105,6 +106,7 @@ class Category extends Model
                 $result[$groupId] = [];
                 $result[$groupId]['groupCash'] = 0;
                 $result[$groupId]['groupCheckCash'] = 0;
+                $result[$groupId]['sort'] = $sortGroup;
                 $result[$groupId]['groupTitle'] = $groupTitle;
                 $result[$groupId]['items'] = [];
             }
@@ -120,6 +122,10 @@ class Category extends Model
             $result[$groupId]['groupCheckCash'] += $checkCash;
         }
 
+        // Sort desc by 'sort'
+        usort($result, function($a, $b) {
+            return $b['sort'] - $a['sort'];
+        });
 //        dd($result);
         return $result;
     }
