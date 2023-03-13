@@ -87,7 +87,7 @@ class AccessController extends Controller
         $user = Auth::user();
 
         $income = Income::with('purse.user')->find($incomeId);
-        dd($income);
+        dd($user, $income);
 
         if (!$income) return false;
 
