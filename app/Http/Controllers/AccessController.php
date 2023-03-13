@@ -93,7 +93,7 @@ class AccessController extends Controller
         if($user->id === $income->purse->user_id || ($user->family_id === $income->purse->user->family_id && $income->purse->hide === 0)) {
             return true;
         }
-        dd($user, $income);
+        dd($user->id, $income->purse->user_id, 'or (', $user->family_id, $income->purse->user->family_id, 'and', $income->purse->hide , '=0)');
         return false;
     }
 
