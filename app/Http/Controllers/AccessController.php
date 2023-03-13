@@ -87,10 +87,9 @@ class AccessController extends Controller
         $user = Auth::user();
 
         $income = Income::with('purse.user')->find($incomeId);
-        dd($user, $income);
 
         if (!$income) return false;
-
+        dd($user, $income);
         if($user->id === $income->purse->user_id || ($user->family_id === $income->purse->user->family_id && $income->purse->hide === 0)) {
             return true;
         }
