@@ -81,4 +81,13 @@ class Check extends Model
         return $checks;
     }
 
+    static public function getSumTotalChecks()
+    {
+        $date = User::getFamilyStartDate();
+        return Check::where('created_at', '>', $date)
+            ->orderByDesc('created_at')
+            ->sum('cash');
+
+    }
+
 }

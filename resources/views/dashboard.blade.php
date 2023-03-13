@@ -53,21 +53,21 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100 text-xl font-semibold">
                     {{ __('Categories') }}
                 </div>
-                <div class="p-6 text-lg font-medium text-gray-900 @if($user->sumTotalChecks <= $user->sumTotalPlans) dark:text-gray-100 @else dark:text-red-400 @endif flex">
-                    {{ $user->sumTotalChecks }} / {{ $user->sumTotalPlans }} BYN
+                <div class="p-6 text-lg font-medium text-gray-900 @if($sumTotalChecks <= $sumTotalPlans) dark:text-gray-100 @else dark:text-red-400 @endif flex">
+                    {{ $sumTotalChecks }} / {{ $sumTotalPlans }} BYN
                 </div>
             </div>
             @foreach($groups as $group)
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                    <h3 class="mb-4 text-lg font-medium text-gray-900 @if($group->sumChecks <= $group->sumPlans) dark:text-gray-100 @else dark:text-red-400 @endif flex justify-between">
-                        <div>{{ $group->title }}</div>
-                        <div>{{ $group->sumChecks }}  / {{ $group->sumPlans }} BYN</div>
+                    <h3 class="mb-4 text-lg font-medium text-gray-900 @if($group['groupCheckCash'] <= $group['groupCash']) dark:text-gray-100 @else dark:text-red-400 @endif flex justify-between">
+                        <div>{{ $group['groupTitle'] }}</div>
+                        <div>{{ $group['groupCheckCash'] }}  / {{ $group['groupCash'] }} BYN</div>
                     </h3>
-                    @if(!count($group->categories))
+                    @if(!count($group['items']))
                         <p class="text-gray-900 dark:text-gray-100">No category</p>
                     @endif
 
-                    @foreach($group->categories->sortByDesc('sort') as $category)
+                    @foreach($group['items'] as $category)
                         @include('home.category.card')
                     @endforeach
                 </div>

@@ -73,6 +73,8 @@ class Category extends Model
         // Get IDs of all users in the same family as the current user
         $familyUserIds = User::where('family_id', $user->family_id)->pluck('id')->toArray();
         $familyId = $user->family_id;
+        $startDate = User::getFamilyStartDate();
+
 
         // get the categories for the authorized user and family members
         $categories = Category::with(['group.user', 'plans'])
@@ -80,9 +82,14 @@ class Category extends Model
                 $query->where('users.id', $userId) // authorized user
                 ->orWhere('users.family_id', $familyId); // family members
             })
+            ->with('checks', function ($query) use ($startDate) {
+                $query->where('checks.created_at', '>', $startDate);
+            })
             ->orderBy('group_id')
             ->get();
 
+
+//        dd($categories);
 
         // restructure the data to fit the expected output
         $result = [];
@@ -92,10 +99,12 @@ class Category extends Model
             $categoryId = $category->id;
             $categoryTitle = $category->title;
             $planCash = $category->plans->last() ? $category->plans->last()->cash : null;
+            $checkCash = $category->checks->sum('cash');
 
             if (!array_key_exists($groupId, $result)) {
                 $result[$groupId] = [];
                 $result[$groupId]['groupCash'] = 0;
+                $result[$groupId]['groupCheckCash'] = 0;
                 $result[$groupId]['groupTitle'] = $groupTitle;
                 $result[$groupId]['items'] = [];
             }
@@ -104,9 +113,11 @@ class Category extends Model
                 'categoryTitle' => $categoryTitle,
                 'categoryId' => $categoryId,
                 'planCash' => $planCash,
+                'checkCash' => $checkCash,
             ];
 
             $result[$groupId]['groupCash'] += $planCash;
+            $result[$groupId]['groupCheckCash'] += $checkCash;
         }
 
 //        dd($result);
